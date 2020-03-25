@@ -1,0 +1,45 @@
+package scheduleDTO;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.hr.cmn.SearchVO;
+
+public class ScheduleDAOMain {
+	
+	private final Logger LOG = Logger.getLogger(ScheduleDAOMain.class);
+	
+	private ScheduleDAO dao;
+	
+	public ScheduleDAOMain() {
+		dao = new ScheduleDAO();
+	}
+	public void doRetrieve() {
+		ScheduleVO scheduleVO = new ScheduleVO();
+		scheduleVO.setPageSize(20);
+		scheduleVO.setPageNum(1);
+		scheduleVO.setScDate("20200217");
+		//scheduleVO.setScDcity("오사카");
+		
+		
+		List<ScheduleVO> list = (List<ScheduleVO>) dao.adminRetrive(scheduleVO);
+		LOG.debug("********************************");
+		//Data출력
+		for(ScheduleVO vo:list) {
+			LOG.debug(vo);
+		}
+		LOG.debug("********************************");
+
+	}
+
+	
+
+	public static void main(String[] args) {
+		ScheduleDAOMain daomain = new ScheduleDAOMain();
+		daomain.doRetrieve();
+
+		
+	}
+
+}

@@ -1,0 +1,143 @@
+<%@page import="java.util.List"%>
+<%@page import="scheduleDTO.ScheduleDAO"%>
+<%@page import="scheduleDTO.ScheduleVO"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<%
+	request.setCharacterEncoding("utf-8");
+	
+	String dCity = request.getParameter("dCity");
+	String aCity = request.getParameter("aCity");
+	String dCityA = request.getParameter("dCityA");
+	String aCityA= request.getParameter("aCityA");
+
+	String outDate = request.getParameter("outDate");
+	String outDateA = request.getParameter("outDateA");
+	String inDateA = request.getParameter("inDateA");
+	String radioValue = request.getParameter("trip-type");
+	
+	ScheduleVO inDeVO=new ScheduleVO();
+	ScheduleDAO scheduleDeDao = new ScheduleDAO();
+	
+	ScheduleVO inArVO=new ScheduleVO();
+	ScheduleDAO scheduleArDao = new ScheduleDAO();
+	
+	List<ScheduleVO> listDe= null;
+	List<ScheduleVO> listAr= null;
+	
+	if(radioValue.equals("1")){//편도
+		
+		inDeVO.setDepartCity(dCity);
+		inDeVO.setArriveCity(aCity);
+		inDeVO.seteDate(outDate);
+		
+		listDe= (List<ScheduleVO>) scheduleDeDao.doRetrive(inDeVO);
+		
+		System.out.println("*****************************************");
+		System.out.println("DeData");
+		//DeData출력
+		for(ScheduleVO vo:listDe) {
+			System.out.println(vo);
+		}
+		System.out.println("*****************************************");
+		
+	}else if(radioValue.equals("3")){//다구간
+		
+	}else if(radioValue.equals("2")){
+		inDeVO.setDepartCity(dCityA);
+		inDeVO.setArriveCity(aCityA);
+		inDeVO.seteDate(outDateA);
+		
+		inArVO.setDepartCity(aCityA);
+		inArVO.setArriveCity(dCityA);
+		inArVO.seteDate(inDateA);
+		
+		listDe= (List<ScheduleVO>) scheduleDeDao.doRetrive(inDeVO);
+		listAr= (List<ScheduleVO>) scheduleArDao.doRetrive(inArVO);
+		
+		System.out.println("*****************************************");
+		System.out.println("DeData");
+		//DeData출력
+		for(ScheduleVO vo:listDe) {
+			System.out.println(vo);
+		}
+		System.out.println("*****************************************");
+		System.out.println("ArData");
+		//ArData출력
+		for(ScheduleVO vo:listAr) {
+			System.out.println(vo);
+		}
+		System.out.println("*****************************************");
+	}
+%>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>항공권 조회</title>
+</head>
+<body>
+	<table border="1">
+		<tr>
+			<td>출발 날짜</td>
+			<td>출발 시간</td>
+			<td>출발 도시</td>
+			<td>도착 도시</td>
+			<td>가격</td>
+			<td>마일리지</td>
+			<td>SC_CODE</td>
+		</tr>
+		<%
+			for(ScheduleVO outVO : listDe){
+		%>
+		<tr>
+			<td><%=outVO.geteDate() %></td>
+			<td><%=outVO.getdTime() %></td>
+			<td><%=outVO.getDepartCity()%></td>
+			<td><%=outVO.getArriveCity() %></td>
+			<td><%=outVO.getPrice() %></td>
+			<td><%=outVO.getMileage() %></td>
+			<td><%=outVO.getScCode() %></td>
+			<td><input type="radio" name="choiceDe"/></td>
+		</tr>
+		<%
+			}
+		%>
+	</table>
+	<hr/>
+	<%
+		if(listAr!=null){ 
+	%>
+	<table border="1">
+		<tr>
+			<td>출발 날짜</td>
+			<td>출발 시간</td>
+			<td>출발 도시</td>
+			<td>도착 도시</td>
+			<td>가격</td>
+			<td>마일리지</td>
+			<td>SC_CODE</td>
+		</tr>
+		<%
+				for(ScheduleVO outVO : listAr){
+		%>
+		<tr>
+			<td><%=outVO.geteDate() %></td>
+			<td><%=outVO.getdTime() %></td>
+			<td><%=outVO.getDepartCity()%></td>
+			<td><%=outVO.getArriveCity() %></td>
+			<td><%=outVO.getPrice() %></td>
+			<td><%=outVO.getMileage() %></td>
+			<td><%=outVO.getScCode() %></td>
+			<td><input type="radio" name="choiceAr"/></td>
+		</tr>
+		<%
+				}
+			}else{
+				System.out.println("Null입니다.");
+			}
+		%>
+	</table>
+	
+</body>
+</html>

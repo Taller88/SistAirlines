@@ -1,0 +1,185 @@
+<%@page import="Reservation.ReservationVO"%>
+<%@page import="Reservation.ReservationDao"%>
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@page import="javax.sql.*"%>
+<%@page import="javax.naming.*"%>
+<%@page import="java.sql.*"%>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PaymentPage</title>
+</head>
+<body>
+<%
+      int price=1000;
+      String name="정진우";
+      String tel="010-8227-1995";
+      String addr="경기도 수원시";
+      
+      request.setCharacterEncoding("UTF-8");
+//변수선언      
+      String ename =    request.getParameter("ename");
+      String passport = request.getParameter("passport");
+      String Gener =    request.getParameter("chk_info");
+      String Scode =    request.getParameter("Scode");
+      String sYesr =    request.getParameter("year");  
+      String sMonth =   request.getParameter("month");  
+      String sDay =     request.getParameter("day");
+      String num =      request.getParameter("num");
+      String Phone =    request.getParameter("Phone");
+   	  String E =        request.getParameter("E");
+   	  String mail =     request.getParameter("mail");
+      
+   
+int flag = 0;
+ReservationVO inVO01 = new ReservationVO();
+ReservationDao dao = new ReservationDao();
+
+//1. 회원저장
+inVO01.setResEname(ename);
+inVO01.setResPassport(passport);
+inVO01.setResScode(Scode);
+inVO01.setResGender(0);
+inVO01.setResBir(sYesr+sMonth+sDay);
+inVO01.setResWay(1);
+inVO01.setResPtype(1);
+inVO01.setResEmail(E + mail);
+inVO01.setResphone(Phone);
+
+
+flag = dao.doInsert(inVO01);
+
+String adultCnt = (String) session.getAttribute("adultCnt");
+String youngCnt = (String) session.getAttribute("youngCnt");
+String yongerCnt = (String) session.getAttribute("youngerCnt");
+
+int adult = 0;
+int young = 0;
+int younger = 0;
+
+try {
+	adult = Integer.parseInt(adultCnt);
+	young = Integer.parseInt(youngCnt);
+	younger = Integer.parseInt(yongerCnt);
+
+} catch (NumberFormatException e) {
+	e.getMessage();
+} catch (Exception e1) {
+	e1.getMessage();
+}
+
+// 성인저장
+for(int i=0; i < adult; i++)
+{
+    ename =    request.getParameter("ename" 	+ "_A" + i);
+    passport = request.getParameter("passport"	+ "_A" + i);
+    Gener =    request.getParameter("chk_info"	+ "_A" + i);
+    Scode =    request.getParameter("Scode"		+ "_A" + i);
+    sYesr =    request.getParameter("year"		+ "_A" + i);  
+    sMonth =   request.getParameter("month"		+ "_A" + i);  
+    sDay =     request.getParameter("day"		+ "_A" + i);
+    
+    inVO01.setResEname(ename);
+    inVO01.setResPassport(passport);
+    inVO01.setResScode(Scode);
+    inVO01.setResGender(0);
+    inVO01.setResBir(sYesr+sMonth+sDay);
+    
+    flag = dao.doInsert(inVO01);
+}
+
+
+// 소아저장
+for(int i=0; i < young; i++)
+{
+    ename =    request.getParameter("ename" 	+ "_B" + i);
+    passport = request.getParameter("passport"	+ "_B" + i);
+    Gener =    request.getParameter("chk_info"	+ "_B" + i);
+    Scode =    request.getParameter("Scode"		+ "_B" + i);
+    sYesr =    request.getParameter("year"		+ "_B" + i);  
+    sMonth =   request.getParameter("month"		+ "_B" + i);  
+    sDay =     request.getParameter("day"		+ "_B" + i);
+    
+    inVO01.setResEname(ename);
+    inVO01.setResPassport(passport);
+    inVO01.setResScode(Scode);
+    inVO01.setResGender(0);
+    inVO01.setResBir(sYesr+sMonth+sDay);
+    
+    flag = dao.doInsert(inVO01);
+}   
+//유아저장
+
+for(int i=0; i < younger; i++)
+{
+    ename =    request.getParameter("ename" 	+ "_C" + i);
+    passport = request.getParameter("passport"	+ "_C" + i);
+    Gener =    request.getParameter("chk_info"	+ "_C" + i);
+    Scode =    request.getParameter("Scode"		+ "_C" + i);
+    sYesr =    request.getParameter("year"		+ "_C" + i);  
+    sMonth =   request.getParameter("month"		+ "_C" + i);  
+    sDay =     request.getParameter("day"		+ "_C" + i);
+    
+    inVO01.setResEname(ename);
+    inVO01.setResPassport(passport);
+    inVO01.setResScode(Scode);
+    inVO01.setResGender(0);
+    inVO01.setResBir(sYesr+sMonth+sDay);
+    
+    flag = dao.doInsert(inVO01);
+}  
+%>
+
+ <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js" ></script>
+<script type="text/javascript">
+
+        var IMP = window.IMP; // 생략가능
+        IMP.init('iamport'); // 'iamport' 대신 부여받은 "가맹점 식별코드"를 사용
+        //onclick, onload 등 원하는 이벤트에 호출합니다
+        IMP.request_pay({
+            
+            
+            pg : 'inicis', // version 1.1.0부터 지원.
+            pay_method : 'card',
+            merchant_uid : 'merchant_' + new Date().getTime(),
+            name : 'Sist Airlines',
+            amount : <%=price%>,
+            buyer_email : 'iamport@siot.do',
+            buyer_name : '<%=name%>',
+            buyer_tel : '<%=tel%>',
+            buyer_addr : '<%=addr%>',
+            buyer_postcode : '123-456',
+            m_redirect_url : 'https://www.yourdomain.com/payments/complete',
+            app_scheme : 'iamportapp'
+              
+             
+
+        }, function(rsp) {
+            if ( rsp.success ) {
+                var msg = '결제가 완료되었습니다.';
+                msg += '고유ID : ' + rsp.imp_uid;
+                msg += '상점 거래ID : ' + rsp.merchant_uid;
+                msg += '결제 금액 : ' + rsp.paid_amount;
+                msg += '카드 승인번호 : ' + rsp.apply_num;
+                
+            } else {
+                var msg = '결제에 실패하였습니다.';
+                msg += '에러내용 : ' + rsp.error_msg;
+            }
+            document.getElementById("result").innerHTML = msg;
+            alert(msg);
+        });
+        
+        
+        
+</scripT>
+ <main>
+</main>
+</body>
+</html>

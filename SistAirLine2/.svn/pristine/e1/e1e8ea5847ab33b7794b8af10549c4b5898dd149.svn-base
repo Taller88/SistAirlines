@@ -1,0 +1,77 @@
+package MemberDTO;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+
+
+public class MemberDAO {
+	
+	private static MemberDAO instance =new MemberDAO();
+	private MemberDAO() {}
+	public static MemberDAO getInstance() {
+		return instance;
+	}
+
+	
+	public int loginMethod(MemberDTO data) {
+		String driver = "oracle.jdbc.driver.OracleDriver";
+		String url = "jdbc:oracle:thin:@localhost:1521:orcl";
+		Connection conn = null;
+		PreparedStatement ppst = null;
+		ResultSet rs = null;
+		int flag=0;
+		try {
+			// JDBC Driver 로딩
+			Class.forName(driver);
+			// Connection 객체 생성 / DB 연결(접속)
+			conn = DriverManager.getConnection(url, "scott", "scott");
+			
+			
+			
+			// 수행할 쿼리 정의 / no에 해당하는 데이터를 수정
+			ppst = conn.prepareStatement("select passwd from member where id=?");
+			// 매개변수로 전달된 데이터를 쿼리문의 물음표에 값 매핑
+			ppst.setString(1, data.getID());
+			
+			// 쿼리 수행
+			
+			//2. 비번 다름
+			//3. 아이디없음
+			//4. 디비오류
+			rs = ppst.executeQuery();
+			if(rs.next()) {
+				if(rs.getString("passwd").equals(data.getPasswd())) {
+					flag=1;// 1. 로그인 성공
+					
+				}else {
+					flag=2;
+				}
+				
+			}else if(rs.getString("passwd")==null){
+				flag=3;//아이디 없음
+			}else {
+				flag=0; //디비오류
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (ppst != null)
+					ppst.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e2) {
+				e2.getStackTrace();
+			}
+		}
+		return flag;
+
+	}
+	
+	
+}

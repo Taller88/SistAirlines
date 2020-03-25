@@ -1,0 +1,73 @@
+/**
+ *<pre>
+ * com.hr.cmn
+ * Class Name : DTO.java
+ * Description : ���� VO
+ * Modification Information
+ * 
+ *   ������      ������              ��������
+ *  ---------   ---------   -------------------------------
+ *  2020-02-03           ���ʻ���
+ *
+ * @author ���������ӿ�ũ ����ȯ�� ������
+ * @since 2020-02-03 
+ * @version 1.0
+ * 
+ *
+ *  Copyright (C) by H.R. KIM All right reserved.Reservation */
+package Reservation;
+
+/**
+ * @author sist
+ *
+ */
+public class DTO {
+	private int pageSize;//������ ������ : 10, 30, 50, 100
+	private int pageNum;//������ �ѹ� : 1, 2, 3,...
+	
+	private int total;//�ѱۼ�
+	private int num;  //�۹�ȣ
+	
+	public DTO() {
+		
+	}
+
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public int getPageNum() {
+		return pageNum;
+	}
+
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+
+	public int getTotal() {
+		return total;
+	}
+
+	public void setTotal(int total) {
+		this.total = total;
+	}
+
+	public int getNum() {
+		return num;
+	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+
+
+	@Override
+	public String toString() {
+		return "DTO [pageSize=" + pageSize + ", pageNum=" + pageNum + ", total=" + total + ", num=" + num + "]";
+	}
+}

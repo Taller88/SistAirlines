@@ -1,0 +1,776 @@
+<%@page import="com.hr.cmn.StringUtil"%>
+<%@page import="Reservation.ReservationDao"%>
+<%@page import="Reservation.ReservationVO"%>
+<%@page import="java.sql.SQLException"%>
+<%@page import="java.util.List"%>
+<%@page import="User.UserVO"%>
+<%@page import="User.UserDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!doctype html>
+<html>
+<head>
+
+<script type="text/javascript" src="jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="jquery-contained-sticky-scroll.js"></script>
+<script language="JavaScript">
+	$(document).ready(function(){
+		$('#sidebar').containedStickyScroll();
+    
+});
+
+function dateSelect(pYear, pMonth, pDay, selectIndex) {
+
+   watch = new Date(pYear.options[pYear.selectedIndex].text, pMonth.options[pMonth.selectedIndex].value,1);
+   hourDiffer = watch - 86400000;
+   calendar = new Date(hourDiffer);
+
+   var daysInMonth = calendar.getDate();
+      for (var i = 0; i < pDay.length; i++) {
+    	  pDay.options[0] = null;
+      }
+      for (var i = 0; i < daysInMonth; i++) {
+    	  pDay.options[i] = new Option(i+1);
+   }
+      pDay.options[0].selected = true;
+}
+
+</script>
+
+<script language="javascript">
+
+function Today(year,mon,day, pNum){
+	alert(pNum);
+     if(year == null && mon == null && day == null){       
+	     today = new Date();
+	     this_year=today.getFullYear();
+	     this_month=today.getMonth();
+	     this_month+=1;
+	     if(this_month <10) this_month="0" + this_month;
+	 
+	     this_day=today.getDate();
+	     if(this_day<10) this_day="0" + this_day;     
+	 }
+	 else{  
+	     var this_year = eval(year);
+	     var this_month = eval(mon); 
+	     var this_day = eval(day);
+     }
+ 
+  montharray=new Array(31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31); 
+  maxdays = montharray[this_month-1]; 
+//아래는 윤달을 구하는 것
+  if (this_month==2) { 
+      if ((this_year/4) != parseInt(this_year/4))
+    	  maxdays=28; 
+      else
+    	  maxdays=29; 
+  } 
+ 
+ document.writeln("<select name='year"+ pNum +"' size=1 onChange='dateSelect(this.form.year"+ pNum +", this.form.month"+ pNum +", this.form.day"+ pNum +", this.form.month"+ pNum +".selectedIndex);'>");
+     for(i=this_year-100; i < this_year+1; i++){//현재 년도에서 과거로 5년까지 미래로 5년까지를 표시함
+         if(i==this_year) 
+        	 document.writeln("<OPTION VALUE="+i+ " selected >" +i); 
+         else 
+        	 document.writeln("<OPTION VALUE="+i+ ">" +i); 
+     }    
+ document.writeln("</select>년");      
+
+ 
+ document.writeln("<select name='month"+ pNum +"' size=1 onChange='dateSelect(this.form.year"+ pNum +", this.form.month"+ pNum +", this.form.day"+ pNum +", this.selectedIndex);'>");
+     for(i=1;i<=12;i++){ 
+         if(i<10){
+             if(i==this_month) document.writeln("<OPTION VALUE=0" +i+ " selected >0"+i); 
+             else document.writeln("<OPTION VALUE=0" +i+ ">0"+i);
+         }         
+         else{
+             if(i==this_month) document.writeln("<OPTION VALUE=" +i+ " selected >" +i);  
+             else document.writeln("<OPTION VALUE=" +i+ ">" +i);  
+         }                     
+    }         
+ document.writeln("</select>월");
+ 
+ document.writeln("<select name='day"+ pNum +"' size=1>");
+     for(i=1;i<=maxdays;i++){ 
+         if(i<10){
+             if(i==this_day) document.writeln("<OPTION VALUE=0" +i+ " selected >0"+i); 
+             else document.writeln("<OPTION VALUE=0" +i+ ">0"+i); 
+         }
+         
+         else{
+             if(i==this_day) document.writeln("<OPTION VALUE=" +i+ " selected } >"+i); 
+             else document.writeln("<OPTION VALUE=" +i+ ">" +i);  
+         }                     
+    }         
+ document.writeln("</select>일"); 
+   
+}
+
+</script>
+
+<style type="text/css">
+.grid_4{width:300px;display:inline;float:right;margin-left:10px;margin-right:10px;padding:10px;color:#fff;background-color:#337AB7}
+
+
+</style>
+
+<title>결제정보 페이지</title>
+<meta charset="utf-8">
+
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="./css/bootstrap.min.css">
+<link rel="stylesheet" href="./css/custom.css">
+<script>
+	function openChild(scCode, passport)
+	{
+		let openWin;
+		console.log('실행');
+		window.name="schedule_list";
+		openWin=window.open("selectSeats.jsp?scCode="+scCode+"&seatNum="+passport,"selectSeats","width=670, height=350");
+	}
+	
+</script>
+
+</head>
+
+<body>
+	<form action="Payment.jsp" method="post" name="form1">
+		<%
+			ReservationVO inVO01 = new ReservationVO();
+
+			ReservationDao dao = new ReservationDao();
+			int flag = dao.doInsert(inVO01);
+			
+			String RESENAME = inVO01.getResEname();
+			int    RESPTYPE = inVO01.getResPtype();
+			String RESPASSPORT = inVO01.getResPassport();
+			String RESBIR = inVO01.getResBir();
+			int    RESPAY = inVO01.getResPay();
+			int    RESMILEAGE = inVO01.getResMileage();
+			String RESPHONE = inVO01.getResphone();
+			String RESEMAIL = inVO01.getResEmail();
+			
+
+			request.setCharacterEncoding("utf-8");
+
+			int uNum = 0;
+			String userEngName = "";
+			String userGender = "";
+			String userBirth = "";
+
+			String year = "";
+			String month = "";
+			String date = "";
+			
+			//!!!!!!!!!!! 회원  테스트용, 지워야됨 !!!!!!!!!!!!!
+			//session.setAttribute("uNum", "5");
+			
+			if (session.getAttribute("uNum") != null && Integer.parseInt(session.getAttribute("uNum").toString()) != 0) {
+				
+				uNum =  Integer.parseInt(session.getAttribute("uNum").toString());
+
+				UserVO inVO = new UserVO();
+				inVO.setuNum(uNum);
+				UserDao mdao = new UserDao();
+				UserVO outVO = mdao.doSelectOne(inVO);
+				userEngName = outVO.getuEname();
+				userGender = outVO.getuGender();
+				userBirth = outVO.getuBir();
+
+				year = userBirth.substring(0, 4);
+				month = userBirth.substring(4, 6);
+				date = userBirth.substring(6, 8);
+				
+
+			} else {
+				uNum = 0;
+			}
+			HttpSession httpSession = request.getSession(true);
+			
+			String adultCnt= (String)httpSession.getAttribute("inputAdult");
+			String childCnt= (String)httpSession.getAttribute("inputChild");
+			String toddCnt= (String)httpSession.getAttribute("inputTodd");
+			  
+			int adult=Integer.parseInt(adultCnt);
+			int child=Integer.parseInt(childCnt);
+			int todd=Integer.parseInt(toddCnt);
+			
+			
+		
+			// form으로 넘어온 값을 변수에 저장
+			String scCode = null;
+			String passport = request.getParameter("passport");
+			String scPrice=request.getParameter("scPrice");
+			
+			String tripType=request.getParameter("tripType");
+			String notIn=(String)request.getParameter("notIn");
+			String radioNum1="";
+			String radioNum2="";
+            
+			if(tripType.equals("1")){
+	            radioNum1=request.getParameter("radioNum1");
+	            int num1=Integer.parseInt(radioNum1);
+	            scCode =request.getParameter("scCode"+num1);
+	            
+			}else if(tripType.equals("2")){
+                radioNum1=request.getParameter("radioNum1");
+                radioNum2=request.getParameter("radioNum2");
+                
+                int num1=Integer.parseInt(radioNum1);
+                int num2=Integer.parseInt(radioNum2);
+                
+			}
+			
+		
+			
+			//int scPrice=Integer.parseInt(price);
+			
+			
+			int totalPrice=0;
+		%>
+		<nav class="navbar navbar-default">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+					aria-expanded="false">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="mainForm.jsp">SIST AIRLINES</a>
+			</div>
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+
+				<ul class="nav navbar-nav navbar-right">
+					<%
+						if (uNum < 1) {
+					%>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false"> 로그인/회원가입 <span class="caret"> </span>
+					</a>
+						<ul class="dropdown-menu">
+							<li><a href="LoginForm.jsp">로그인</a></li>
+							<li><a href="SignUpForm.jsp">회원가입</a></li>
+						</ul></li>
+					<%
+						} else {
+					%>
+
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false"> 로그아웃/mypage <span class="caret">
+						</span>
+					</a>
+						<ul class="dropdown-menu">
+							<li><a href="LogoutProcess.jsp">로그아웃</a></li>
+							<li><a href="Mypage.jsp">마이 페이지</a></li>
+						</ul></li>
+					<%
+						}
+					%>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">항공권 예매<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="login.jsp">일반 예매</a></li>
+						</ul></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">스카이패스<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="join.jsp">회원 혜택</a></li>
+							<li><a href="join.jsp">마일리지 적립</a></li>
+						</ul></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">서비스 안내<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="join.jsp">탑승수속</a></li>
+							<li><a href="join.jsp">수하물</a></li>
+						</ul></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">프로모션/여행상품<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="join.jsp">이벤트</a></li>
+							<li><a href="join.jsp">특가항공</a></li>
+						</ul></li>
+				</ul>
+			</div>
+		</nav>
+		<!-------------------------- 메뉴바 끝 ---------------------------------------------------->
+		<input type="hidden" id="scPrice" name="scPrice"/>
+		<input type="hidden" id="totalPrice" name="totalPrice"/>
+		<!-------------------------- 사이드 바 ---------------------------------------------------->
+		
+		<div id="sidebar" class=" grid_4"  style="clear: both;">
+			결제정보
+			<hr/> 
+			<div>
+				<LABEL>성인: </LABEL> <label><%=adult %></label><br/>
+				<LABEL>소아: </LABEL><label><%=child %></label><br/>
+				<LABEL>유아: </LABEL><label><%=todd %></label><br/>
+			</div>
+			<hr/>
+			<div>
+				<LABEL>기본 가격: </LABEL><LABEL><%=scPrice %></LABEL><br/>
+				<LABEL>총가격</LABEL><br/>
+				<LABEL>적립 마일리지</LABEL><br/>
+				<LABEL>10,000P</LABEL><br/>
+			</div>
+			<hr/>
+		</div>
+		
+		<!-------------------------- 사이드 바 끝 ---------------------------------------------------->
+		<div  id=" sidebart" class="container " style="max-width: 800px;">
+		<%
+			if (uNum != 0) {
+		%>
+		<!-------------------------- 탑승객 구분   (성인/회원) ----------------------------------------->
+
+		<div   style="max-width: 800px;">
+			<h1>회원</h1>
+
+			<table class ="table table-hover table-bordered">
+
+			<thead class="bg-primary text-center">
+				<!-- 테이블 header -->
+				<th class="text-center" colspan="2">정보</th>
+			</thead>
+
+			<tbody class="text-center">
+				<!-- data영역 -->
+				<tr class="text-center">
+					<td><b>승객구분</b></td>
+					<td><b> 
+		            <%if ("1".equals(userGender)) { %> 
+		   
+		   
+		   		    	<input type="checkbox" name="chk_info" value="1" checked>남
+		   		    	<input type="checkbox" value="2">여
+					<%
+						} else if ("2".equals(userGender)) {
+					%>
+						<input type="checkbox" value="1">남
+						<input type="checkbox" name="chk_info" value="2" checked>여
+					<%
+						}
+					%>
+					</b>
+					</td>
+				</tr>
+
+				<tr>
+					<td>영어이름</td>
+					<td>
+						<input type="text" name="ename"
+						class="form-control mr-sm-2" placeholder="영어이름을 입력하세요."
+						value=<%=userEngName%>>
+					</td>
+				</tr>
+
+				<tr>
+					<td>좌석번호</td>
+					<td>
+					    <input type="text" name="Scode" id="userseatNum"
+						class="form-control mr-sm-2">
+					 
+					</td>
+				</tr>
+
+				<tr>
+					<td>여권번호</td>
+					<td>
+					   <input type="text" name="passport" id="passport"
+						class="form-control mr-sm-2" required="required"
+						placeholder="여권번호을 입력하세요.">
+					</td>
+				</tr>
+
+				<tr>
+					<td>생년월일</td>
+					<td>
+					   <script language="javascript"> Today(null,null,null, ""); </script>
+					   <lable class="btn btn-outline-success my-2 my-sm-0"
+							onclick="openChild('<%=scCode%>','userseatNum')">좌석선택</label>
+					</td>
+					
+				</tr>
+			  </tbody>
+			</table>
+		  <hr/>
+		 </div>	
+			<!-------------------------- 탑승객 구분   (성인/비회원) ----------------------------------------->
+			<%
+				} else {
+			%>
+
+			<div class="container mt-4" style="max-width: 800px;">
+				<h1>비회원</h1>
+			
+				<table class="table table-hover  table-bordered">
+
+					<thead class="bg-primary text-center">
+						<!-- 테이블 header -->
+						<th class="text-center" colspan="2">정보</th>
+					</thead>
+
+					<tbody class="text-center">
+						<!-- data영역 -->
+						<tr class="text-center">
+							<td><b>승객구분</b></td>
+							<td><b>
+					    <% if ("1".equals(userGender)) { %>
+					    
+					     <input type="checkbox" name="chk_info" value="1" checked>남 
+					     <input type="checkbox" value="2">여 
+						<%
+ 					    }else if ("2".equals(userGender)) {
+ 					    %>
+ 					     <input type="checkbox" value="1">남 
+ 					     <input type="checkbox" name="chk_info" value="2" checked>여 
+						<%
+ 						}
+ 						%>
+							</b></td>
+						</tr>
+
+						<tr>
+							<td>영어이름</td>
+							<td>
+							    <input type="text" name="ename"
+								class="form-control mr-sm-2" placeholder="영어이름을 입력하세요."
+								value=<%=userEngName%>>
+							</td>
+						</tr>
+
+						<tr>
+							<td>좌석번호</td>
+							<td><input type="text" name="Scode" id="userseatNum"
+								class="form-control mr-sm-2">
+							</td>
+						</tr>
+
+						<tr>
+							<td>여권번호</td>
+							<td>
+							    <input type="text" name="passport" id="passport"
+								class="form-control mr-sm-2" required="required"
+								placeholder="여권번호을 입력하세요.">
+							</td>
+						</tr>
+
+						<tr>
+							<td>생년월일</td>
+							<td>
+							   <script language="javascript"> Today(null,null,null, ''); </script>
+							   <lable class="btn btn-outline-success my-2 my-sm-0"
+									onclick="openChild('<%=scCode%>','userseatNum')">좌석선택</label>
+							</td>
+						</tr>
+					</tbody>
+				 </table>
+				<hr/>
+			  </div>
+				<%
+					}
+				%>
+               <!----------------------동행자(성인)  -------------------------->
+				<%
+					for (int i = 0; i < adult; i++) {
+				%>
+				<div class="container mt-5" style="max-width: 800px;">
+					<h1>
+						성인<%=i + 1%></h1>
+
+					<table class="table table-hover  table-bordered">
+
+						<thead class="bg-primary text-center">
+							<!-- 테이블 header -->
+							<th class="text-center" colspan="2">정보</th>
+						</thead>
+
+						<tbody class="text-center">
+							<!-- data영역 -->
+							<tr class="text-center">
+							  <td><b>승객구분</b></td>
+							  <td>
+							    <b> 
+							      <input type="checkbox" name="chk_info_A<%=i%>" value="1" checked>남 
+								  <input type="checkbox" name="chk_info_A<%=i%>" value="2">여
+								</b>
+							  </td>
+							</tr>
+							
+							<tr>
+								<td>영어이름</td>
+								<td>
+							      <input type="text" name="ename_A<%=i%>"
+								  class="form-control mr-sm-2" placeholder="영어이름을 입력하세요.">
+								</td>
+							</tr>
+
+							<tr>
+								<td>좌석번호</td>
+								<td>
+								    <input type="text" name="Scode_A<%=i%>" id="adultseatNum<%=i%>"
+									class="form-control mr-sm-2">
+								</td>
+							</tr>
+
+							<tr>
+							  <td>여권번호</td>
+							  <td>
+							      <input type="text" name="passport_A<%=i%>" id="passport"
+								  class="form-control mr-sm-2" required="required"
+								  placeholder="여권번호을 입력하세요." value="<%=adult%>">
+							  </td>
+							</tr>
+							
+							<tr>
+							  <td>생년월일</td>
+							  <td>
+								  <script language="javascript"> Today(null,null,null,'_A<%=i%>'); </script>
+                                  <lable class="btn btn-outline-success my-2 my-sm-0"
+										onclick="openChild('<%=scCode%>','adultseatNum<%=i%>')">좌석선택</label>
+							  </td>
+							</tr>
+						</tbody>
+					 </table>
+				   <hr/>
+				</div>
+				<%
+					}
+				%>
+				<!-------------------------- 탑승객 구분   (소아) ----------------------------------------->
+
+				<%
+					if (child > 0) {
+						for (int i = 0; i < child; i++) {
+				%>
+				<div class="container mt-6" style="max-width: 800px;">
+					<h1>
+						소아<%=i + 1%></h1>
+
+					<table class="table table-hover  table-bordered">
+						
+					  <thead class="bg-primary text-center">
+							<!-- 테이블 header -->
+							<th class="text-center" colspan="2">정보</th>
+					  </thead>
+						
+						
+					  <tbody class="text-center">	
+						<!-- data영역 -->
+						<tr class="text-center">
+							<td><b>승객구분</b></td>
+							<td>
+								<b>
+							       <input type="checkbox" name="chk_info_B<%=i%>" value="1" checked>남
+								   <input type="checkbox" value="2">여
+								</b>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>영어이름</td>
+							<td>
+							   <input type="text" name="ename_B<%=i%>" 
+							          class="form-control mr-sm-2" placeholder="영어이름을 입력하세요.">
+							</td>
+					    </tr>
+
+
+						<tr>
+							<td>좌석번호</td>
+							<td>
+								<input type="text" name="Scode_<%=i%>" id="youngseatNum<%=i%>" class="form-control mr-sm-2">
+							</td>
+						</tr>
+
+						<tr>
+							<td>여권번호</td>
+							<td>
+							  <input
+								type="text" name="passport_B<%=i%>" id="passport"
+								class="form-control mr-sm-2" required="required"
+								placeholder="여권번호을 입력하세요." value="<%=adult%>">
+							</td>
+						</tr>
+
+						<tr>
+							<td>생년월일</td>
+							<td>
+							    <script language="javascript"> Today(null,null,null, '_B<%=i%>'); </script>
+
+								<lable class="btn btn-outline-success my-2 my-sm-0"
+									   onclick="openChild('<%=scCode%>','youngseatNum<%=i%>')">좌석선택</label>
+							</td>
+						</tr>
+					  </tbody>
+					</table>
+				   <hr/>
+				</div>
+				<%
+					} //for
+					} //if
+				%>
+				<!-------------------------- 탑승객 구분   (유아) ----------------------------------------->
+
+				<%
+				
+					if (todd > 0) {
+						for (int i = 0; i < todd; i++) {
+				%>
+				<div class="container mt-7 " style="max-width: 800px;">
+					<h1>유아<%=i + 1%></h1>
+
+					<table class="table table-hover  table-bordered">
+						
+					  <thead class="bg-primary text-center">
+							<!-- 테이블 header -->
+							<th class="text-center" colspan="2">정보</th>
+					  </thead>
+					  
+					  <tbody class="text-center">	
+						<!-- data영역 -->
+						<tr class="text-center">
+						  <td><b>승객구분</b></td>
+						  <td>
+							<b>
+							 	<input type="checkbox" name="chk_info_C<%=i%>" value="1" checked>남
+								<input type="checkbox" value="2">여
+							</b>
+						  </td>
+						</tr>
+						
+						<tr>
+							<td>영어이름</td>
+							<td>
+							   <input type="text" name="ename_C<%=i%>" 
+							          class="form-control mr-sm-2" placeholder="영어이름을 입력하세요.">
+							</td>
+					    </tr>
+
+						<tr>
+							<td>좌석번호</td>
+							<td>
+								<input type="text" name="Scode_C<%=i%>" id="youngerseatNum<%=i%>" class="form-control mr-sm-2">
+							</td>
+						</tr>
+
+						<tr>
+							<td>여권번호</td>
+							<td>
+							  <input
+								type="text" name="passport_C<%=i%>" id="passport"
+								class="form-control mr-sm-2" required="required"
+								placeholder="여권번호을 입력하세요." value="<%=adult%>">
+							</td>
+						</tr>
+
+						<tr>
+							<td>생년월일</td>
+							<td>
+							    <script language="javascript"> Today(null,null,null, '_C<%=i%>'); </script>
+
+								<lable class="btn btn-outline-success my-2 my-sm-0"
+									   onclick="openChild('<%=scCode%>','youngerseatNum<%=i%>')">좌석선택</label>
+							</td>
+						</tr>
+					  </tbody>
+					</table>
+				  <hr/>
+				</div>
+
+
+				
+				<%
+					} //for
+					} //if
+				%>
+				
+			
+		<!------------------------탑승객 정보 끝 -------------------------------------------------->
+		
+		<!------------------------탑승객 연락처 이메일 ---------------------------------------------->
+		<div class="container mt-8" style="max-width: 800px;">
+		<h1>연락처 정보</h1>
+
+		<table class="table table-hover  table-bordered">
+			
+				<thead class="bg-primary text-center"><!-- 테이블 header -->
+            		<th class="text-center" colspan="3">정보</th>
+           		
+            	</thead>
+            	
+					<tbody class="text-center"><!-- data영역 -->
+						<tr class="text-left">
+							<td colspan="3">연락처</td>
+						</tr>
+
+						<tr>
+						  <td>
+							<select name="num">
+									<option value="">국가번호</option>
+									<option value="1993">+82</option>
+									<option value="1994">+83</option>
+									<option value="1995">+81</option>
+							</select>
+						  </td>
+
+						  <td colspan=2>
+						  	<input type="text" name="Phone"
+								class="form-control mr-sm-2" placeholder="연락처를 입력하세요.">
+						  </td>
+						</tr>
+
+						<tr class="text-left">
+							<td colspan="3">이메일</td>
+						</tr>
+
+						<tr>
+							<td  colspan=2>
+								
+								<span>
+								<input type="text" name="E"
+								class="form-control mr-sm-2" placeholder="주소를 입력하세요." style="width: 300px">
+							
+								
+							@
+
+							
+							 <select name="mail"  placeholder="직접입력">
+									<option >직접입력</option>
+									<option >naver.com</option>
+									<option >daum.net</option>
+									<option >nateon.net</option>
+							 </select>
+							 </span>
+							</td>
+
+						 </tr>
+
+					</tbody>
+
+			</table>
+
+
+	</div>
+	<!------------------------------- 탑승객 연락처 이메일 ---------------------------------------------->	
+		<input type="submit" value="결제하기">
+	</div>	
+			
+	</form>
+	<footer class="bg-dark mt-4 p-5 text-center" style="color: #FFFFFF;">
+
+		SIST AIRLINES </footer>
+	<script src="./js/jquery.min.js"></script>
+	<script src="./js/popper.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+</body>
+
+</html>
+

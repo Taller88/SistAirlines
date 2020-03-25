@@ -1,0 +1,356 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@page import="User.UserDao"%>
+<%@page import="User.UserVO"%>
+
+   
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+	.menubar li ul {
+		background: rgb(109,109,109);
+		display:none;  /* 평상시에는 서브메뉴가 안보이게 하기 */
+		height:auto;
+		padding:0px;
+		margin:0px;
+		border:0px;
+		position:absolute;
+		width:200px;
+		z-index:200;
+		}
+	.menubar li:hover ul {
+		display:block;   /* 마우스 커서 올리면 서브메뉴 보이게 하기 */
+		}A
+	table {
+    width: 100%; text-align: center;}
+   th, td {
+    padding: 7px 10px 10px 10px; text-align:center; height:40px; }
+   th {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 100%;
+    border-bottom: 2px solid #111111;
+    border-top: 1px solid #999;
+    height:40px;
+    width: 120px;
+    text-align: center;}
+   tr.even {
+    background-color: #efefef;}
+    
+    .centered { display: table; margin-left: auto; margin-right: auto; } 
+   
+</style>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="/SistAirLine/css/bootstrap.min.css">
+<link rel="stylesheet" href="/SistAirLine/css/custom.css">
+<title>JSP 게시판 웹사이트</title>
+</head>
+
+<body>
+
+
+    <%
+   int uNum=0;
+   String check=(String)session.getAttribute("check");
+   if(check!=null){
+      uNum=(Integer)session.getAttribute("uNum");
+   }   
+%>
+   <nav class="navbar navbar-default">
+      <div class="navbar-header">
+         <button type="button" class="navbar-toggle collapsed"
+            data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+            aria-expanded="false">
+            <span class="icon-bar"></span> <span class="icon-bar"></span> <span
+               class="icon-bar"></span>
+         </button>
+         <a class="navbar-brand" href="administer.jsp">SIST AIRLINES</a>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      
+         <ul class="nav navbar-nav navbar-right">
+<%
+         
+      if(uNum<1){   
+         
+%>
+            <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                     aria-expanded="false">
+                     로그인/회원가입
+                     <span class="caret">
+                     </span>
+                  </a>
+               <ul class="dropdown-menu">
+                  <li><a href="LoginForm.jsp">로그인</a></li>
+                  <li><a href="SignUpForm.jsp">회원가입</a></li>
+               </ul>
+            </li>
+<%
+            }else{
+
+%>            <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                     aria-expanded="false">
+                     로그아웃/mypage
+                     <span class="caret">
+                     </span>
+                  </a><ul class="dropdown-menu">
+                  <li><a href="LogoutProcess.jsp">로그아웃</a></li>
+                  <li><a href="MypageForm.jsp">마이 페이지</a></li>
+               </ul>
+            </li>
+<%
+            }
+
+%>
+            <li class="dropdown"><a href="#" class="dropdown-toggle"
+               data-toggle="dropdown" role="button" aria-haspopup="true"
+               aria-expanded="false">예약관리<span class="caret"></span></a>
+               <ul class="dropdown-menu">
+                  <li><a href="login.jsp">일반 예매</a></li>
+               </ul></li>
+            <li class="dropdown"><a href="#" class="dropdown-toggle"
+               data-toggle="dropdown" role="button" aria-haspopup="true"
+               aria-expanded="false">스케줄관리<span class="caret"></span></a>
+               <ul class="dropdown-menu">
+                  <li><a href="join.jsp">회원 혜택</a></li>
+                  <li><a href="join.jsp">마일리지 적립</a></li>
+               </ul></li>
+            <li class="dropdown"><a href="#" class="dropdown-toggle"
+               data-toggle="dropdown" role="button" aria-haspopup="true"
+               aria-expanded="false">직원관리<span class="caret"></span></a>
+               <ul class="dropdown-menu">
+                  <li><a href="join.jsp">탑승수속</a></li>
+                  <li><a href="join.jsp">수하물</a></li>
+               </ul></li>
+            <li class="dropdown"><a href="#" class="dropdown-toggle"
+               data-toggle="dropdown" role="button" aria-haspopup="true"
+               aria-expanded="false">프로모션/여행상품<span class="caret"></span></a>
+               <ul class="dropdown-menu">
+                  <li><a href="join.jsp">이벤트</a></li>
+                  <li><a href="join.jsp">특가항공</a></li>
+               </ul></li>
+         </ul>
+      </div>
+   </nav>
+   
+   
+   
+   
+    <div class="container">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4"></div>
+      
+            		<h4 align="center" style="padding-top: 70px;" >항공스케줄 수정</h4></br></br></br></br>
+                	<form name="insert_frm" action="/SistAirLine/scheduleDTO/schedule.do"  method="get">
+						    <input type="hidden" name="work_div"  id="work_div" />
+						   	<input type="hidden" name="seq"  id="seq" value="${vo.scCode}" />
+						   
+						 	<div class="centered"  >						
+							<table border="1" style="text-align: center;">
+								 
+							      <tr>
+							         <th style="text-align: center;">출발날짜</<th><td><input type="text" value="${vo.scDate}" name="scdate" id="scdate" /></td>
+							      </tr>
+							      <tr>
+							         <th style="text-align: center;">출발시간</<th><td><input type="text" value="${vo.scDtime}" name="scdtime" id="scdtime"  /></td>
+							      </tr>
+							      <tr>
+							         <th style="text-align: center;">소요시간</<th><td><input type="text" value="${vo.scStime}" name="scstime" id="scstime" /></td>
+							      </tr>
+									
+							      <tr>
+							         <th style="text-align: center;">출발도시</<th><td><input type="text" value="${vo.scDcity}" name="scdcity" id="scdcity"  /></td>
+							      </tr>
+							      <tr>
+							         <th style="text-align: center;">도착도시</<th><td><input type="text" value="${vo.scAcity}" name="scacity" id="scacity"  /></td>
+							      </tr>
+							      <tr>
+							         <th style="text-align: center;">가격</<th><td><input type="text" value="${vo.scPrice}" name="scprice" id="scprice"  /></td>
+							      </tr>
+							      <tr>
+							         <th style="text-align: center;">마일리지</<th><td><input type="text" value="${vo.scMileage}" name="scmileage" id="scmileage"  /></td>
+							      </tr>
+							      
+							      <tr>
+							         <th style="text-align: center;">비행기이름</<th><td><input type="text" value="${vo.scAname}" name="scaname" id="scaname"/></td>
+							      </tr>
+							      
+							      
+							      <tr>
+							         <th style="text-align: center;">수용좌석</<th><td><input type="text" value="${vo.scCapacity}" name="sccapcacity" id="sccapcacity"  /></td>
+							      </tr>
+							      
+							      <tr>
+							         <th style="text-align: center;">UNOCCUPIED</<th><td><input type="text" value="${vo.scUnoccupied}" name="scunoccupied" id="scunoccupied" /></td>
+							      </tr>
+							      
+							      <tr>
+							         <th style="text-align: center;">sccode</<th><td><input type="text" value="${vo.scCode}" name="sccode" id="sccode" readonly="readonly" /></td>
+							      </tr>
+							      <tr>
+							         <th style="text-align: center;">scstate</<th><td><input type="text" value="${vo.scState}" name="scstate" id="scstate" /></td>
+							      </tr>
+							</table>
+							
+							<div  align="center" style="padding-top: 30px; ">
+								<table border="0" >
+									<div> 
+										<td style=" padding-right: 10px; width:90px;"><input class="btn btn-primary form-control" type="button"  value="목록" id="to_list_btn" /></td>
+										<td style="padding-left: 10px; width:90px;"><input class="btn btn-primary form-control"  type="button"  value="수정" id="update_btn" /></td>
+									</div>
+								</table>
+							</div>
+						</form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="/SistAirLine/js/bootstrap.js"></script>
+
+<script type="text/javascript">
+	//수정
+	$("#update_btn").on("click",function(){
+		console.log("#update_btn");
+		
+		var scdate = $("#scdate").val();
+		if(null == scdate || scdate.trim().length == 0){
+			alert("scdate 확인하세요.");
+			return;
+		}
+		var scdtime = $("#scdtime").val();
+		if(null == scdtime || scdtime.trim().length == 0){
+			alert("scdtime 확인하세요.");
+			return;
+		}
+		
+		var scstime = $("#scstime").val();
+		if(null == scstime || scstime.trim().length == 0){
+			alert("scstime 확인하세요.");
+			return;
+		}
+		
+		var scdcity = $("#scdcity").val();
+		if(null == scdcity || scdcity.trim().length == 0){
+			alert("scdcity 확인하세요.");
+			return;
+		}
+		
+		var scacity = $("#scacity").val();
+		if(null == scacity || scacity.trim().length == 0){
+			alert("scacity 확인하세요.");
+			return;
+		}
+		
+		var scprice = $("#scprice").val();
+		if(null == scprice || scprice.trim().length == 0){
+			alert("scprice 확인하세요.");
+			return;
+		}
+		
+		var scmileage = $("#scmileage").val();
+		if(null == scmileage || scmileage.trim().length == 0){
+			alert("scmileage 확인하세요.");
+			return;
+		}
+		
+		var scaname = $("#scaname").val();
+		var sccapcacity = $("#sccapcacity").val();
+		if(null == sccapcacity || sccapcacity.trim().length == 0){
+			alert("sccapcacity 확인하세요.");
+			return;
+		}
+		var scunoccupied = $("#scunoccupied").val();
+		if(null == scunoccupied || scunoccupied.trim().length == 0){
+			alert("scunoccupied 확인하세요.");
+			return;
+		}
+		var sccode = $("#sccode").val();
+		
+		var scstate = $("#scstate").val();
+		if(null == scstate || scstate.trim().length == 0){
+			alert("scstate 확인하세요.");
+			return;
+		}
+		
+		
+		//ajax
+		$.ajax({
+			type:"POST",
+			url:"/SistAirLine/scheduleDTO/schedule.do",
+			dataType:"html", 
+			data:{"work_div":"do_update",
+				  "scdate":$("#scdate").val(),
+				  "scdtime":$("#scdtime").val(),
+				  "scstime":$("#scstime").val(),
+				  "scdcity":$("#scdcity").val(),
+				  "scacity":$("#scacity").val(),
+				  "scprice":$("#scprice").val(),
+				  "scmileage":$("#scmileage").val(),
+				  "scaname":$("#scaname").val(),
+				  "sccapcacity":$("#sccapcacity").val(),
+				  "scunoccupied":$("#scunoccupied").val(),
+				  "sccode":$("#sccode").val(),
+				  "scstate":$("#scstate").val()
+				 
+			},
+			success:function(data){ //성공
+				   console.log("data="+data);
+				   alert("data:"+data);
+				   var jData = JSON.parse(data);
+				   if(null != jData && jData.msgId =="1"){
+					   alert(jData.msgContents);
+					   goRetrieve();
+				   }else{
+					   alert(jData.msgId+ "||" + jData.msgContents);
+				   }
+			   
+			},
+			error:function(xhr,status,error){
+			 alert("error:"+error);
+			},
+			complete:function(data){
+	
+			}   
+		});     //--ajax	
+	
+	});
+	
+	
+	$("#to_list_btn").on('click',function(){
+		//console.log("#to_list_btn");
+		goRetrieve();
+	});
+	
+	//목록호출
+	function goRetrieve(){
+		 window.location.href='/SistAirLine/scheduleDTO/schedule.do?work_div=do_adminretrieve';
+	}
+	
+	
+	
+	
+	
+	$(document).ready(function(){
+			
+			//console.log("document ready");
+	
+		
+		});
+	
+ </script>
+
+</body>
+</html>
+
+
+
+
+
+
+

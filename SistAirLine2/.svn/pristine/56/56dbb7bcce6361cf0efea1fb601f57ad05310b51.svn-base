@@ -1,0 +1,100 @@
+package scheduleDTO;
+
+import com.hr.cmn.DTO;
+
+public class ScheduleVO extends DTO {
+	String eDate;
+	String dTime;
+	String departCity;
+	String arriveCity;
+	String price;
+	int mileage;
+	String scCode;
+	
+	public ScheduleVO() {}
+
+	public ScheduleVO(String eDate, String dTime, String departCity, String arriveCity, String price, int mileage,
+			String scCode) {
+		super();
+		this.eDate = eDate;
+		this.dTime = dTime;
+		this.departCity = departCity;
+		this.arriveCity = arriveCity;
+		this.price = price;
+		this.mileage = mileage;
+		this.scCode = scCode;
+	}
+
+	public String geteDate() {
+		return eDate;
+	}
+
+	public void seteDate(String eDate) {
+		this.eDate = eDate;
+	}
+
+	public String getdTime() {
+		return dTime;
+	}
+
+	public void setdTime(String dTime) {
+		this.dTime = dTime;
+	}
+
+	public String getDepartCity() {
+		return departCity;
+	}
+
+	public void setDepartCity(String departCity) {
+		this.departCity = departCity;
+	}
+
+	public String getArriveCity() {
+		return arriveCity;
+	}
+
+	public void setArriveCity(String arriveCity) {
+		this.arriveCity = arriveCity;
+	}
+
+	public String getPrice() {
+		return price;
+	}
+
+	public void setPrice(String price) {
+		this.price = price;
+	}
+
+	public int getMileage() {
+		return mileage;
+	}
+
+	public void setMileage(int mileage) {
+		this.mileage = mileage;
+	}
+
+	public String getScCode() {
+		return scCode;
+	}
+
+	public void setScCode(String scCode) {
+		this.scCode = scCode;
+	}
+
+	@Override
+	public String toString() {
+		return "CityVO [eDate=" + eDate + ", dTime=" + dTime + ", departCity=" + departCity + ", arriveCity="
+				+ arriveCity + ", price=" + price + ", mileage=" + mileage + ", scCode=" + scCode + ", toString()="
+				+ super.toString() + "]";
+	}
+
+	
+	
+
+	
+	
+	
+	
+	
+	
+}

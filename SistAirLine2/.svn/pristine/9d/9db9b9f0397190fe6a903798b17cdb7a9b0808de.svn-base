@@ -1,0 +1,435 @@
+/**
+ * 
+ */
+package Reservation;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import com.hr.cmn.ConnectionMaker;
+import com.hr.cmn.DTO;
+import com.hr.cmn.JDBCResClose;
+import com.hr.cmn.SearchVO;
+
+/**
+ * @author sist
+ *
+ */
+public class ReservationDao {
+	private final Logger LOG = Logger.getLogger(ReservationDao.class);
+	private ConnectionMaker connectionMaker;
+
+	public ReservationDao() {
+		connectionMaker = new ConnectionMaker();
+	}
+
+	public DTO doSelectOne(DTO dto) {
+		ReservationVO inVO = (ReservationVO) dto;
+		ReservationVO outVO = null;
+		LOG.debug("inVO: "+inVO);
+		Connection connection = null;// DB Connection
+		PreparedStatement pstmt = null;// VS Statement
+		ResultSet rs = null;
+
+		try {
+			// 1. Connection
+			connection=connectionMaker.getConnection();
+			LOG.debug("1. connection:" + connection);
+
+			// 2. PreparedStatement
+			// 2.1. SQL
+			StringBuilder sb = new StringBuilder();
+			
+			sb.append("SELECT              \n");
+			sb.append("    RES_NUM,        \n");
+			sb.append("    RES_PASSPORT,   \n");
+			sb.append("    RES_ENAME,      \n");
+			sb.append("    RES_KNAME,      \n");
+			sb.append("    RES_BIR,        \n");
+			sb.append("    RES_PTYPE,      \n");
+			sb.append("    RES_WAY,        \n");
+			sb.append("    RES_PHONE,      \n");
+			sb.append("    RES_EMAIL,      \n");
+			sb.append("    RES_STATE       \n");
+			sb.append("FROM RESERVATION    \n");
+			sb.append("WHERE RES_NUM = ?   \n");
+			sb.append("AND RES_PASSPORT = ?\n");
+					
+			pstmt = connection.prepareStatement(sb.toString());
+			LOG.debug("2. PreparedStatement:" + pstmt);
+			LOG.debug("2.1. sql:\n" + sb.toString());
+
+			// 3.Param
+			LOG.debug("3. Param:" + inVO);
+			pstmt.setString(1, inVO.getRESNUM());
+			pstmt.setString(2, inVO.getRESPASSPORT());
+
+			// 4.Query�닔�뻾
+			rs = pstmt.executeQuery();
+			if (rs.next()) {// Moves the cursor forward one row from its current position.
+				// Data 1嫄댁쓣 outVO�떞湲�.
+				outVO = new ReservationVO();
+
+				outVO.setRESNUM(rs.getString("RES_NUM"));
+				outVO.setRESPASSPORT(rs.getString("RES_PASSPORT"));
+				
+				outVO.setRESNUM(rs.getString("RES_NUM"));
+				outVO.setRESPASSPORT(rs.getString("RES_PASSPORT"));
+				outVO.setRESENAME(rs.getString("RES_ENAME"));
+				outVO.setRESKNAME(rs.getString("RES_KNAME"));
+				outVO.setRESBIR(rs.getString("RES_BIR"));
+				outVO.setRESPTYPE(rs.getInt("RES_PTYPE"));
+				outVO.setRESWAY(rs.getInt("RES_WAY"));
+				outVO.setRESPHONE(rs.getString("RES_PHONE"));
+				outVO.setRESEMAIL(rs.getString("RES_EMAIL"));
+				outVO.setRESSTATE(rs.getString("RES_STATE"));				
+				LOG.debug("4. return :" + outVO);
+			}
+
+		} catch (SQLException e) {
+			LOG.debug("===================");
+			LOG.debug("=  SQL Exception  =" + e.getMessage());
+			LOG.debug("===================");
+			e.printStackTrace();
+		} finally {
+			JDBCResClose.close(rs);
+			JDBCResClose.close(pstmt);
+			JDBCResClose.close(connection);
+		}
+
+		return outVO;
+
+	}
+
+	public int doUpdate(DTO dto) {
+		int flag = 0;
+		ReservationVO inVO = (ReservationVO) dto;
+
+		Connection connection = null;// DB Connection
+		PreparedStatement pstmt = null;// VS Statement
+
+		try {
+			// 1.Connection �깮�꽦
+			connection = connectionMaker.getConnection();
+			connection.setAutoCommit(false);// transaction 媛쒕컻�옄媛� 愿�由�
+
+			LOG.debug("1. Connection: " + connection);
+			// 2.PreparedStatement
+			// 2.1 SQL
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("UPDATE reservation  \n");
+			sb.append("SET RES_ENAME = ?,  \n");
+			sb.append("    RES_KNAME = ?,  \n");
+			sb.append("	RES_PTYPE = ?,     \n");
+			sb.append("	RES_WAY = ?,       \n");
+			sb.append("	RES_PHONE = ?,     \n");
+			sb.append("	RES_EMAIL = ?,     \n");
+			sb.append("	RES_STATE = ?      \n");
+			sb.append("WHERE RES_NUM = ?   \n");
+			sb.append("AND  RES_PASSPORT =?\n");
+			// ------------------荑쇰━------------------------
+
+			pstmt = connection.prepareStatement(sb.toString());
+			LOG.debug("2. PreparedStatement: " + pstmt);
+			LOG.debug("2.1. query:\n" + sb.toString());
+			// 3.param
+			LOG.debug("3. param: " + inVO);
+			// 3.1 param binding
+			pstmt.setString(1, inVO.getRESENAME());
+			pstmt.setString(2, inVO.getRESKNAME());
+			pstmt.setInt(3, inVO.getRESPTYPE());
+			pstmt.setInt(4, inVO.getRESWAY());
+			pstmt.setString(5, inVO.getRESPHONE());
+			pstmt.setString(6, inVO.getRESEMAIL());
+			pstmt.setString(7, inVO.getRESSTATE());
+			pstmt.setString(8, inVO.getRESNUM());
+			pstmt.setString(9, inVO.getRESPASSPORT());
+
+			flag = pstmt.executeUpdate();// DML諛쒖깮�뿉 �궗�슜.
+			connection.commit();
+			LOG.debug("4. flag: " + flag);
+		} catch (SQLException e) {
+			LOG.debug("===========================");
+			LOG.debug("=SQLException=" + e.getMessage());
+			LOG.debug("===========================");
+			e.printStackTrace();
+
+			// Rollback
+			JDBCResClose.rollBack(connection);
+
+		} finally { // �옄�썝諛섎궔
+			// �궗�슜 �뿭�닚�쑝濡� close
+			JDBCResClose.close(pstmt);// prepareStatement
+			JDBCResClose.close(connection);// connection
+		}
+		return flag;
+	}
+
+	// �뿉�윭... 紐살옟寃좎쓬
+	public int doDelete(DTO dto) {
+		int flag = 0;
+
+		Connection connection = connectionMaker.getConnection();
+		PreparedStatement pstmt = null;
+		ReservationVO inVO = (ReservationVO) dto;
+
+		// 3. query�닔�뻾�쓣 �쐞�븳 PreparedStatement
+		StringBuilder sb = new StringBuilder();
+		sb.append(" DELETE from reservation \n");
+		sb.append(" WHERE RES_NUM = ?    \n");
+
+		try {
+
+			LOG.debug("2.sql=\n" + sb.toString());
+			LOG.debug("2.1 param=\n" + inVO);
+			pstmt = connection.prepareStatement(sb.toString());
+			LOG.debug("3.pstmt=" + pstmt);
+			// * 4. query�떎�뻾
+			// 4.1. Bind蹂��닔�뿉 媛� �꽕�젙
+			pstmt.setString(1, inVO.getRESNUM());
+
+			// 4.2. query�닔�뻾:
+			flag = pstmt.executeUpdate();
+			LOG.debug("4.flag=" + flag);
+
+		} catch (SQLException e) {
+			LOG.debug("===================");
+			LOG.debug("SQLException=" + e.getMessage());
+			LOG.debug("===================");
+			e.printStackTrace();
+			// * 6. PreparedStatement,ResultSet
+			// * 7. Connection醫낅즺
+		} finally {
+			// �궗�슜 �뿭�닚�쑝濡� close
+			JDBCResClose.close(pstmt);// prepareStatement
+			JDBCResClose.close(connection);// connection
+		}
+		return flag;
+	}
+
+	public int doInsert(DTO dto) {
+		int flag = 0;
+
+		Connection connection = connectionMaker.getConnection();
+		PreparedStatement pstmt = null;
+		ReservationVO inVO = (ReservationVO) dto;
+
+		try {
+
+			// 3. query�닔�뻾�쓣 �쐞�븳 PreparedStatement
+			StringBuilder sb = new StringBuilder();
+
+			// ----------------Query---------------------
+
+			sb.append("INSERT INTO reservation		 (	");
+			sb.append("    res_num,           		  	");
+			sb.append("    res_passport,      		  	");
+			sb.append("    res_ename,         		  	");
+			sb.append("    res_kname,         		  	");
+			sb.append("    res_bir,           		  	");
+			sb.append("    res_ptype,         		  	");
+			sb.append("    res_way,           		  	");
+			sb.append("    res_phone,         		  	");
+			sb.append("    res_email,         		  	");
+			sb.append("    res_state,         		  	");
+			sb.append("    res_scode,         		  	");
+			sb.append("    u_num              		  	");
+			sb.append(") VALUES (             		  	");
+			sb.append("    '1',                 			");
+			sb.append("    ?,                 			");
+			sb.append("    ?,                 			");
+			sb.append("    '�솉�듅誘�',            		    ");
+			sb.append("    '20200213',                 			");
+			sb.append("    1,             		    ");
+			sb.append("    1 ,                			");
+			sb.append("    '01099991234',     		    ");
+			sb.append("    'sad@naver.com' ,   		    ");
+			sb.append("    '1',               		  	");
+			sb.append("    '1234',            		    ");
+			sb.append("    '1234'             		    ");
+			sb.append(")                      		 	");
+
+			LOG.debug("2.sql=\n" + sb.toString());
+			LOG.debug("2.1 param=\n" + inVO);
+			pstmt = connection.prepareStatement(sb.toString());
+			LOG.debug("3.pstmt=" + pstmt);
+
+			// -----------------Bind�꽕�젙-----------------
+			pstmt.setString(1, inVO.getRESENAME());
+			pstmt.setString(2, inVO.getRESPASSPORT());
+
+			// 4.2. query�닔�뻾:
+			flag = pstmt.executeUpdate();
+			LOG.debug("4.flag=" + flag);
+
+		} catch (SQLException e) {
+			LOG.debug("===================");
+			LOG.debug("SQLException=" + e.getMessage());
+			LOG.debug("===================");
+			e.printStackTrace();
+			// * 6. PreparedStatement,ResultSet
+			// * 7. Connection醫낅즺
+		} finally {
+			// �궗�슜 �뿭�닚�쑝濡� close
+			JDBCResClose.close(pstmt);// prepareStatement
+			JDBCResClose.close(connection);// connection
+		}
+		return flag;
+
+	}
+	public List<?> doRetrieve(DTO dto) {
+		SearchVO inVO = (SearchVO) dto;
+		List<ReservationVO> outList = new ArrayList<ReservationVO>();
+		
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		ResultSet  rs = null;
+		
+		StringBuilder sbWhere = new StringBuilder();//寃��깋議곌굔
+		StringBuilder sb = new StringBuilder();//寃��깋query
+		
+		
+		if(null != inVO.getSearchDiv()) {
+			if("10".equals(inVO.getSearchDiv())) {//�깮�뀈�썡�씪
+				sbWhere.append("WHERE t1.RES_NUM like ?||'%' \n");		
+			}else if("20".equals(inVO.getSearchDiv())) {//�씠由�
+				sbWhere.append("WHERE t1.RES_PASSPORT like ?||'%' \n");
+			}else if("30".equals(inVO.getSearchDiv())) {//�쉶�썝ID
+				sbWhere.append("WHERE t1.RES_PHONE like ?||'%' \n");
+		    }else if("40".equals(inVO.getSearchDiv())) {//�빖�뱶�룿
+				sbWhere.append("WHERE t1.RES_EMAIL like ?||'%' \n");
+		    }
+		}
+		//荑쇰━荑쇰━---------------------------------------------------------------------
+		sb.append("SELECT *                                                     \n");
+		sb.append("FROM(                                                        \n");
+		sb.append("    SELECT B.RES_NUM                                         \n");
+		sb.append("          ,B.RES_PASSPORT                                    \n");
+		sb.append("          ,b.RES_PHONE                                       \n");
+		sb.append("          ,b.RES_EMAIL                                       \n");
+		sb.append("    FROM (                                                   \n");
+		sb.append("        SELECT ROWNUM as rnum,A.*                            \n");
+		sb.append("        FROM(                                                \n");
+		sb.append("            SELECT t1.*                                      \n");
+		sb.append("            FROM RESERVATION t1                              \n");
+		sb.append("            --寃��깋議곌굔                                    							\n");
+		//--------------------------------------------------------------------------
+		if(null != inVO.getSearchDiv() ) {
+			if(null != inVO.getSearchWord() ) {
+				sb.append(sbWhere.toString());
+			}
+		}
+		//--------------------------------------------------------------------------
+		sb.append("            ORDER BY t1.RES_NUM DESC                         \n");
+		sb.append("        )A                                                   \n");
+		sb.append("        WHERE rownum <=(?*(?-1)+?)						    \n");
+		sb.append("    )B                                                       \n");
+		sb.append("    WHERE rnum >=(?*(?-1)+1) )              					\n");
+		sb.append("CROSS JOIN                                                   \n");
+		sb.append("(                                                            \n");
+		sb.append("    SELECT COUNT(*) TOTAL                                    \n");
+		sb.append("    FROM RESERVATION t1                                      \n");
+		sb.append("    --寃��깋議곌굔                                     									\n");
+		//--------------------------------------------------------------------------
+		if(null != inVO.getSearchDiv() ) {
+			if(null != inVO.getSearchWord() ) {
+				sb.append(sbWhere.toString());
+			}
+		}
+		//--------------------------------------------------------------------------
+		sb.append(")                                                            \n");
+		//荑쇰━荑쇰━---------------------------------------------------------------------
+		try {
+			//1.connection
+			connection = this.connectionMaker.getConnection();
+			LOG.debug("1. connection="+connection);
+			
+			//2.pstmt
+			//2.1.
+			LOG.debug("2. qurey=\n"+sb.toString());
+			pstmt = connection.prepareStatement(sb.toString());
+			LOG.debug("2.1. pstmt="+pstmt);
+			LOG.debug("3. param="+inVO);
+		
+			//寃��깋�뼱 �엳�뒗 寃쎌슦
+			if(null != inVO.getSearchDiv() && null != inVO.getSearchWord() ) {
+				//寃��깋�뼱
+				//&PAGE_SIZE*(&PAGE_NUM-1)+&PAGE_SIZE
+				//&PAGE_SIZE*(&PAGE_NUM-1)+1
+				
+				//1.寃��깋�뼱
+				//2.PAGE_SIZE
+				//3.PAGE_NUM
+				//4.PAGE_SIZE
+				//5.PAGE_SIZE
+				//6.PAGE_NUM
+				//7.寃��깋�뼱
+				pstmt.setString(1, inVO.getSearchWord());
+				pstmt.setInt(2, inVO.getPageSize());
+				pstmt.setInt(3, inVO.getPageNum());
+				pstmt.setInt(4, inVO.getPageSize());
+				pstmt.setInt(5, inVO.getPageSize());
+				pstmt.setInt(6, inVO.getPageNum());
+				pstmt.setString(7, inVO.getSearchWord());
+			
+			//寃��깋�뼱 �뾾�쓣�븣	
+			}else {
+				//1.PAGE_SIZE
+				//2.PAGE_NUM
+				//3.PAGE_SIZE
+				//4.PAGE_SIZE
+				//5.PAGE_NUM
+				
+				pstmt.setInt(1, inVO.getPageSize());
+				pstmt.setInt(2, inVO.getPageNum());
+				pstmt.setInt(3, inVO.getPageSize());
+				pstmt.setInt(4, inVO.getPageSize());
+				pstmt.setInt(5, inVO.getPageNum());
+				
+			}
+		
+			//4.query�닔�뻾
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				   //Data 1嫄댁쓣 outVO�떞湲�.
+				ReservationVO outVO = new ReservationVO();
+				  
+				   //而щ읆 �븣由ъ븘�뒪 �븣�씪�뀳~ �쓣 媛��졇�샂
+				   outVO.setRESNUM(rs.getString("RES_NUM"));
+				   outVO.setRESPASSPORT(rs.getString("RES_PASSPORT"));
+				   outVO.setRESPHONE(rs.getString("RES_PHONE"));
+				   outVO.setRESEMAIL(rs.getString("RES_EMAIL"));
+				  
+				   
+				   outVO.setTotal(rs.getInt("total"));
+				   outList.add(outVO);
+				   
+			   }//while
+			   LOG.debug("4. return :"+outList);
+			
+			
+			
+		} catch(SQLException e){
+			LOG.debug("=================");
+			LOG.debug("=SQLException="+e.getMessage());
+			LOG.debug("=================");
+			e.printStackTrace();
+		}finally {
+			JDBCResClose.close(rs);
+			JDBCResClose.close(pstmt);
+			JDBCResClose.close(connection);
+			
+		}
+		
+		
+		return outList;
+	}
+		
+	
+}

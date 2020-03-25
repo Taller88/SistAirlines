@@ -1,0 +1,363 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@page import="User.UserVO"%>
+<%@page import="User.UserDao"%>
+
+
+   
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="./css/bootstrap.min.css">
+<link rel="stylesheet" href="./css/custom.css">
+<title>JSP 게시판 웹사이트</title>
+</head>
+
+<body>
+<%
+       request.setCharacterEncoding("utf-8");
+       //String uNum=request.getParameter("uNum");
+        int uNum=(Integer)session.getAttribute("uNum");
+       UserVO inVO= new UserVO();
+       inVO.setuNum(uNum);
+       
+       UserDao dao=new UserDao();
+      UserVO outVO=dao.doSelectOne(inVO);
+      
+      
+
+      String uId = outVO.getuId();
+      String uPw = outVO.getuPw();
+      String uKname = outVO.getuKname();
+      String uEname = outVO.getuEname();
+      String uBir = outVO.getuBir();
+      String year= uBir.substring(0,4);
+      String month= uBir.substring(4,6);
+      String day= uBir.substring(6,8);
+      
+      String uPhone = outVO.getuPhone();
+      String uPhone1= uPhone.substring(0,3);
+      String uPhone2= uPhone.substring(3,7);
+      String uPhone3= uPhone.substring(7,11);
+      
+      
+      
+      String uEmail = outVO.getuEmail();
+      String uGender = outVO.getuGender();
+      String uAddress = outVO.getuAddress();
+      String uCountry = outVO.getuCountry();
+      int uMileage = outVO.getuMileage();
+      String uMaindepart = outVO.getuMaindepart();
+      String authority = outVO.getAuthority();
+      
+
+      
+      
+
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+     <nav class = "navbar navbar-default">
+        <div class="navbar-header">
+        <button type = "button" class="navbar-togle collapsed"
+            data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+            aria-expanded="false">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>   
+            <a class="navbar-brand" href="main.jsp">JSP 게시판 웹사이트</a>        
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class ="nav navbar-nav"> 
+                <li><a href="main.jsp">메인</a></li>
+                <li><a href="bbs.jsp">게시판</a></li>
+            </ul>
+            <ul class ="nav navbar-nav navbar-right"> 
+                <li class = "dropdown">
+                    <a href="#" class="dropdown-toggle"
+                        data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">접속하기<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class= "active"><a href="login.jsp">로그인</a></li>
+                        <li><a href="join.jsp">회원가입</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    
+    
+    
+     <div class="container">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4"></div>
+            <div class="jumbotron" style="padding-top: 20px;">
+                <form method="post" action="MypageUpdateProcess.jsp">
+                    <h3 style="text-align: center;">회원정보수정</h3>
+                    
+                    
+                    <table>
+                    <td>아이디 :</td>
+                        <td><input type="text" readonly="readonly" class="form-control" value=<%= uId %> name="userID" maxlength="20"> </td>
+                    </table>
+                    
+                    <table>
+                        <td>비밀번호 : </td>
+                        <td><input type="password" class="form-control" placeholder="비밀번호" name="userPassword" value=<%= uPw %> maxlength="20"></td>
+                    </table>
+                    <table>
+                        <td>한글 이름 : </td>
+                        <td><input type="text" class="form-control" placeholder="한글 이름" name="userKname" value=<%= uKname %> maxlength="20"></td>
+                    </table>
+                    <table>
+                        <td>영어 이름 : </td>
+                        <td><input type="text" class="form-control" placeholder="영어 이름" name="userEname" value=<%= uEname %> maxlength="20"></td>
+                    </table>
+                    
+                
+                        
+                        <table border=1>
+                              <label class="Birth" for="class">생년월일</label>
+                        <select name="year" value=<%=year %> >
+                            <optgroup label="년도">
+                                <option value=<%=year %>><%=year %></option>
+                                <option value="1961">1961</option>
+                                <option value="1962">1962</option>
+                                <option value="1963">1963</option>
+                                <option value="1964">1964</option>
+                                <option value="1965">1965</option>
+                                <option value="1966">1966</option>
+                                <option value="1967">1967</option>
+                                <option value="1968">1968</option>
+                                <option value="1969">1969</option>
+                                <option value="1970">1970</option>
+                                <option value="1971">1971</option>
+                                <option value="1972">1972</option>
+                                <option value="1973">1973</option>
+                                <option value="1974">1974</option>
+                                <option value="1975">1975</option>
+                                <option value="1976">1976</option>
+                                <option value="1977">1977</option>
+                                <option value="1978">1978</option>
+                                <option value="1979">1979</option>
+                                <option value="1980">1980</option>
+                                <option value="1981">1981</option>
+                                <option value="1982">1982</option>
+                                <option value="1983">1983</option>
+                                <option value="1984">1984</option>
+                                <option value="1985">1985</option>
+                                <option value="1986">1986</option>
+                                <option value="1987">1987</option>
+                                <option value="1988">1988</option>
+                                <option value="1989">1989</option>
+                                <option value="1990">1990</option>
+                                <option value="1991">1991</option>
+                                <option value="1992">1992</option>
+                                <option value="1993">1993</option>
+                                <option value="1994">1994</option>
+                                <option value="1995">1995</option>
+                                <option value="1996">1996</option>
+                                <option value="1997">1997</option>
+                                <option value="1998">1998</option>
+                                <option value="1999">1999</option>
+                                <option value="2000">2000</option>
+                                <option value="2001">2001</option> 
+                             </optgroup>                           
+                        </select>
+                        <select name="month" value=<%=month %> >
+                            <optgroup label="월">
+                                <option value=<%=month %>><%=month %></option>
+                                <option value="01">1</option>
+                                <option value="02">2</option>
+                                <option value="03">3</option>  
+                                <option value="04">4</option>  
+                                <option value="05">5</option>  
+                                <option value="06">6</option>  
+                                <option value="07">7</option>  
+                                <option value="08">8</option>  
+                                <option value="09">9</option>  
+                                <option value="10">10</option>  
+                                <option value="11">11</option>  
+                                <option value="12">12</option>  
+                             </optgroup>                              
+                        </select>
+                        <select name="day" value=<%=day %> >
+                             <optgroup label="일">
+                                <option value=<%=day %>><%=day %></option>   
+                                <option value="01">1</option>   
+                                <option value="02">2</option>   
+                                <option value="03">3</option>   
+                                <option value="04">4</option>   
+                                <option value="05">5</option>   
+                                <option value="06">6</option>   
+                                <option value="07">7</option>   
+                                <option value="08">8</option>   
+                                <option value="09">9</option>   
+                                <option value="10">10</option>  
+                                <option value="11">11</option>  
+                                <option value="12">12</option>  
+                                <option value="13">13</option>  
+                                <option value="14">14</option>  
+                                <option value="15">15</option>  
+                                <option value="16">16</option>  
+                                <option value="17">17</option>  
+                                <option value="18">18</option>  
+                                <option value="19">19</option>  
+                                <option value="20">20</option>  
+                                <option value="21">21</option>  
+                                <option value="22">22</option>  
+                                <option value="23">23</option>  
+                                <option value="24">24</option>  
+                                <option value="25">25</option>  
+                                <option value="26">26</option>  
+                                <option value="27">27</option>  
+                                <option value="28">28</option>  
+                                <option value="29">29</option>  
+                                <option value="30">30</option>  
+                                <option value="31">31</option>  
+                              </optgroup>                              
+                        </select>
+                        </table>
+                        
+                        
+                        
+                          <table>
+                         <tr>
+                         <td >
+                        <label class="userphone" for="class">휴대폰번호</label>
+                        <select name="userphone1" value=<%=uPhone1 %>>
+                            <optgroup label="010">
+                                <option value=<%=uPhone1 %>><%=uPhone1 %></option>
+                                <option value="010">010</option>
+                                <option value="011">011</option>
+                                <option value="012">012</option>                                
+                            </optgroup>
+                         </select>
+                         </td>
+                            <td><input type="text" class="form-control" placeholder=" " name="userphone2" value=<%=uPhone2 %> maxlength="10"></td>
+                            <td><input type="text" class="form-control" placeholder=" " name="userphone3" value=<%=uPhone3 %> maxlength="10"></td>
+                            
+                           </tr>
+                        </table>
+                        
+                        <table>
+                        <td>이메일 : </td>
+                        <td><input type="email" class="form-control" placeholder="이메일" name="userEmail" value=<%= uEmail %> maxlength="20"></td>
+                    </table>
+                        
+                        
+                        
+                    <%if(uGender.equals("2")){ %>
+                    <div class="form-group" style="text-align: left;">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-primary active">
+                                <input type="radio" name="userGender" autocomplete="off" value="1" >남자
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="userGender" autocomplete="off" value="2" checked="checked">여자
+                            </label>
+                        </div>
+                    </div>
+                    <% 
+                    } else if(uGender.equals("1")){
+
+                    %>
+                    
+                    <div class="form-group" style="text-align: left;">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-primary active">
+                                <input type="radio" name="userGender" autocomplete="off" value="1" checked="checked">남자
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="userGender" autocomplete="off" value="2" >여자
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <% 
+                    }
+
+                    %>
+                    
+                   
+                    
+                        
+                        
+                        <table>
+                        <td>주소   :</td>
+                        <td><input type="text" class="form-control" placeholder="주소" name="userAddress" value=<%= uAddress %> maxlength="20"></td>
+                        </table>
+                        
+                        <table border=1>
+                        <label class="userCountry" for="class">회원국가</label>
+                        <select name="userCountry" value=<%= uCountry %>>
+                            <optgroup label="회원국가">
+                                <option value=<%= uCountry %>><%= uCountry %></option>
+                                <option value="Korea">Korea</option>
+                                <option value="China">China</option>
+                                <option value="Japan">Japan</option>                              
+                                <option value="Vietnam">Vietnam</option>                              
+                                <option value="Guam">Guam</option>                              
+                                <option value="Philippines">Philippines</option>
+                                <option value="Singapore">Singapore</option> 
+                                <option value="Russia">Russia</option>                               
+                            </optgroup>
+                        </select>
+                        </table>
+                        
+                        
+                    <table>
+                    <input type="hidden" name="userMileage" value=<%= uMileage %>>
+                    </table>
+                    
+                    <!-- 
+                    <table>
+                    <td>마일리지 :</td>
+                        <td><input type="text" readonly="readonly" class="form-control" value=<%= uMileage %> name="userMileage" maxlength="20"> </td>
+                    </table>
+                     -->
+                        
+                        
+                        <label class="maindepart" for="class">주요출발지</label>
+                        <select name="maindepart" value=<%= uMaindepart %>>
+                            <optgroup label="회원국가">
+                                <option value=<%= uMaindepart %>><%= uMaindepart %></option>
+                                <option value="Korea">Korea</option>
+                                <option value="China">China</option>
+                                <option value="Japan">Japan</option>                              
+                                <option value="Vietnam">Vietnam</option>                              
+                                <option value="Guam">Guam</option>                              
+                                <option value="Philippines">Philippines</option>
+                                <option value="Singapore">Singapore</option> 
+                                <option value="Russia">Russia</option>                               
+                            </optgroup>
+                        </select>
+                        
+                        
+                        </div>
+                        
+                        
+                        <table>
+                            <tr>
+                            <td><input type="submit" class="btn btn-primary form-control" value="회원정보 수정하기" ></td>
+                            <td><input type="submit" class="btn btn-primary form-control" value="취소" ></td>
+                            </tr>
+                        </table>
+
+</body>
+</html>
+
+
+
+
+

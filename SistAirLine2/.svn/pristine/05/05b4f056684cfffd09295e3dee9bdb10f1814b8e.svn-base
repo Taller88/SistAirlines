@@ -1,0 +1,240 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@page import="User.UserDao"%>
+<%@page import="User.UserVO"%>
+
+   
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="./css/bootstrap.min.css">
+<link rel="stylesheet" href="./css/custom.css">
+<title>JSP 게시판 웹사이트</title>
+</head>
+
+<body>
+<%
+       request.setCharacterEncoding("utf-8");
+       int uNum=(Integer)session.getAttribute("uNum");
+       
+       UserVO inVO= new UserVO();
+       inVO.setuNum(uNum);
+       
+       UserDao dao=new UserDao();
+      UserVO outVO=dao.doSelectOne(inVO);
+
+      String uId = outVO.getuId();
+      String uPw = outVO.getuPw();
+      String uKname = outVO.getuKname();
+      String uEname = outVO.getuEname();
+      String uBir = outVO.getuBir();
+      String year= uBir.substring(0,4);
+      String month= uBir.substring(4,6);
+      String day= uBir.substring(6,8);
+      
+      String uPhone = outVO.getuPhone();
+      String uPhone1= uPhone.substring(0,3);
+      String uPhone2= uPhone.substring(3,7);
+      String uPhone3= uPhone.substring(7,11);
+      
+      
+      
+      String uEmail = outVO.getuEmail();
+      String uGender = outVO.getuGender();
+      String uAddress = outVO.getuAddress();
+      String uCountry = outVO.getuCountry();
+      int uMileage = outVO.getuMileage();
+      String uMaindepart = outVO.getuMaindepart();
+      String authority = outVO.getAuthority();
+      
+
+      
+      
+
+%>
+<form name="Join" action="MypageUpdate.jsp" method="post">
+    <nav class = "navbar navbar-default">
+        <div class="navbar-header">
+        <button type = "button" class="navbar-togle collapsed"
+            data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+            aria-expanded="false">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>   
+            <a class="navbar-brand" href="main.jsp">JSP 게시판 웹사이트</a>        
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class ="nav navbar-nav"> 
+                <li><a href="main.jsp">메인</a></li>
+                <li><a href="bbs.jsp">게시판</a></li>
+            </ul>
+            <ul class ="nav navbar-nav navbar-right"> 
+                <li class = "dropdown">
+                    <a href="#" class="dropdown-toggle"
+                        data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">접속하기<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class= "active"><a href="login.jsp">로그인</a></li>
+                        <li><a href="join2.jsp">회원가입</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4"></div>
+            <div class="jumbotron" style="padding-top: 20px;">
+                <form method="post" action="mypageUpdate.jsp">
+                    <h3 style="text-align: center;">회원정보</h3>
+                    
+                    
+                    <table>
+                    <td>아이디 : </td>
+                        <td><%= uId %>
+                        </td>
+                    </table>
+                    
+                    <table>
+                        <td>비밀번호 : </td>
+                        <td><%= uPw %></td>
+                    </table>
+                    <table>
+                        <td>한글 이름 : </td>
+                        <td><%= uKname %></td>
+                    </table>
+                    <table>
+                        <td>영어 이름 : </td>
+                        <td> <%= uEname %></td>
+                    </table>
+                    
+                
+                        
+                        <table>
+                         <tr>
+                            <td>생년월일 : </td>
+                            <td><%=uBir %> </td>
+                            </tr>
+                        </table>
+                        
+                        
+                        
+                        <table>
+                         <tr>
+                            <td>휴대폰번호 : </td>
+                            <td><%=uPhone %> </td>
+                            </tr>
+                        </table>
+                        
+                        <table>
+                        <td>이메일 : </td>
+                        <td><%= uEmail %></td>
+                    </table>
+                        
+                        
+                        
+                    <%if(uGender=="2"){ %>
+                    <div class="form-group" style="text-align: left;">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-primary active">
+                                <input type="radio" name="userGender" autocomplete="off" value="1" >남자
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="userGender" autocomplete="off" value="2" checked="checked">여자
+                            </label>
+                        </div>
+                    </div>
+                    <% 
+                    } else if(uGender=="1"){
+
+                    %>
+                    
+                    <div class="form-group" style="text-align: left;">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-primary active">
+                                <input type="radio" name="userGender" autocomplete="off" value="1" checked="checked" >남자
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="userGender" autocomplete="off" value="2" >여자
+                            </label>
+                        </div>
+                    </div>
+                    <% 
+                   }
+                    %>
+                    
+                    
+                    
+                    <%if(uGender.equals("2")){ %>
+                    <table>
+                        <td>성별   :</td>
+                        <td>여자</td>
+                     </table>
+                    <% 
+                    } else if(uGender.equals("1")){
+
+                    %>
+                    <table>
+                        <td>성별   :</td>
+                        <td>남자</td>
+                     </table>
+                    <% 
+                    }
+
+                    %>
+                        
+                        
+                        <table>
+                        <td>주소   :</td>
+                        <td><%= uAddress %> </td>
+                        </table>
+                        
+                                                
+                        <table>
+                        <td>회원국가:</td>
+                        <td><%= uCountry %></td>
+                        </table>
+                        
+                        <table>
+                        <td>마일리지:</td>
+                        <td><%= uMileage %></td>
+                        </table>
+                        
+                        
+                        <table>
+                        <td>주요출발지:</td>
+                        <td><%=uMaindepart  %></td>
+                        </table>
+                        
+                                    
+                        
+                        </div>
+                        
+                    </div>
+                        
+                    </div>
+                    
+                    
+                        <input type="submit" class="btn btn-primary form-control" value="회원정보 수정하기" >
+                    
+
+                </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+

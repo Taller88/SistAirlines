@@ -1,0 +1,576 @@
+<%@page import="java.sql.SQLException"%>
+<%@page import="java.util.List"%>
+<%@page import="User.UserVO"%>
+<%@page import="User.UserDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<!doctype html>
+
+<html>
+
+<head>
+<title>결제정보 페이지</title>
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="./css/bootstrap.min.css">
+<link rel="stylesheet" href="./css/custom.css">
+<script>
+	function openChild(scCode, passport)
+	{
+		let openWin;
+		console.log('실행');
+		window.name="schedule_list";
+		openWin=window.open("selectSeats.jsp?scCode="+scCode+"&seatNum="+passport,"selectSeats","width=570, height=350");
+	}
+	
+</script>
+</head>
+
+<body>
+
+<%  
+	request.setCharacterEncoding("utf-8");
+	
+    int uNum=0;
+    String userEngName = null;
+    String userGender = null;
+    String userBirth = null;
+    
+    String year = null;
+    String month = null;
+    String date = null;
+    
+    
+if((Integer)session.getAttribute("uNum")!=0){
+	uNum=(Integer)session.getAttribute("uNum");
+	
+    UserVO inVO = new  UserVO();
+    inVO.setuNum(uNum);
+    UserDao mdao = new UserDao();
+    UserVO outVO = mdao.doSelectOne(inVO);
+    userEngName = outVO.getuEname();
+    userGender = outVO.getuGender();
+    userBirth = outVO.getuBir();
+    
+    year = userBirth.substring(0,4);
+    month = userBirth.substring(4,6);
+    date = userBirth.substring(6,8);
+	
+}else{
+	uNum=0;
+}
+	
+	
+	
+	String adultCnt=(String)session.getAttribute("adultCnt");
+	String youngCnt=(String)session.getAttribute("youngCnt");
+	String youngerCnt=(String)session.getAttribute("youngerCnt");
+	
+	int adult=0;
+	int young=0;
+	int younger=0;
+	
+try{
+		adult=Integer.parseInt(adultCnt);
+		young=Integer.parseInt(youngCnt);
+		younger=Integer.parseInt(youngerCnt);
+		
+	}catch(NumberFormatException e){
+		e.getMessage();
+	}catch(Exception e1){
+		e1.getMessage();
+	
+	}
+
+	
+	// form으로 넘어온 값을 변수에 저장
+	String scCode = request.getParameter("sc_Code");	
+	String passport = request.getParameter("passport");
+	
+
+%>
+	<nav class="navbar navbar-default">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed"
+				data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+				aria-expanded="false">
+				<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="mainForm.jsp">SIST AIRLINES</a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		
+			<ul class="nav navbar-nav navbar-right">
+<%
+			
+		if(uNum<1){	
+			
+%>
+				<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">
+							로그인/회원가입
+							<span class="caret">
+							</span>
+						</a>
+					<ul class="dropdown-menu">
+						<li><a href="LoginForm.jsp">로그인</a></li>
+						<li><a href="SignUpForm.jsp">회원가입</a></li>
+					</ul>
+				</li>
+<%
+
+				}else{
+
+%>
+
+				<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">
+							로그아웃/mypage
+							<span class="caret">
+							</span>
+						</a><ul class="dropdown-menu">
+						<li><a href="LogoutProcess.jsp">로그아웃</a></li>
+						<li><a href="Mypage.jsp">마이 페이지</a></li>
+					</ul>
+				</li>
+<%
+				}
+
+%>
+				<li class="dropdown"><a href="#" class="dropdown-toggle"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false">항공권 예매<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="login.jsp">일반 예매</a></li>
+					</ul></li>
+				<li class="dropdown"><a href="#" class="dropdown-toggle"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false">스카이패스<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="join.jsp">회원 혜택</a></li>
+						<li><a href="join.jsp">마일리지 적립</a></li>
+					</ul></li>
+				<li class="dropdown"><a href="#" class="dropdown-toggle"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false">서비스 안내<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="join.jsp">탑승수속</a></li>
+						<li><a href="join.jsp">수하물</a></li>
+					</ul></li>
+				<li class="dropdown"><a href="#" class="dropdown-toggle"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false">프로모션/여행상품<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="join.jsp">이벤트</a></li>
+						<li><a href="join.jsp">특가항공</a></li>
+					</ul></li>
+			</ul>
+		</div>
+	</nav>
+
+
+	<%if(uNum!=0){ %>
+	<!-------------------------- 탑승객 구분   (성인/회원) ----------------------------------------->
+
+		<div class="container mt-3" style="max-width: 1000px;">
+			<h1>회원</h1>
+			
+			<form action="Payment.jsp" method="post">
+
+			<table width="100%" border=1>
+				<tr>
+					<td bgcolor="#17a2b8" align="center" height="25">
+					   <b>승객구분</b>
+					</td>
+					<td bgcolor="#17a2b8" align="center" height="25"><b>
+				    <%
+				       if(userGender.equals("1")){
+				  
+				    %>
+					<input type="checkbox" name="chk_info" value="1" checked >남 
+					<input type="checkbox" value="2">여 </b></td>
+                    <%
+                        }
+                    
+				       else if(userGender.equals("2")){
+                   %>
+                    <input type="checkbox" value="1" >남 
+                    <input type="checkbox" name="chk_info" value="2" checked >여 </b></td>
+                    <%
+                        }
+                    %>
+				</tr>               		
+					<td bgcolor="#ffffff" align="center" height="25">영어이름</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+					   <input type="text" name="ename" 
+					   class="form-control mr-sm-2" placeholder="영어이름을 입력하세요." 
+					   value=<%= userEngName %> >
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">
+						좌석번호
+					</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+						<input type="text" id="userseatNum" class="form-control mr-sm-2">
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">여권번호</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+					<input type="text" name="passport" id="passport" class="form-control mr-sm-2" required="required"
+						   placeholder="여권번호을 입력하세요." ></td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">생년월일</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+					<select name="year">
+							<option value=<%= year  %>><%= year  %></option>
+							<option value="1993">1993</option>
+							<option value="1994">1994</option>
+							<option value="1995">1995</option>
+					</select> 
+					<select name="month">
+							<option value=<%= month %>><%= month %></option>
+							<option value="01">01</option>
+							<option value="02">02</option>
+							<option value="03">03</option>
+					</select> 
+					<select name="date">
+							<option value=<%= date %>><%= date %></option>
+							<option value="01">01</option>
+							<option value="02">02</option>
+							<option value="03">03</option>
+					</select>
+						<lable class="btn btn-outline-success my-2 my-sm-0" onclick="openChild('<%= scCode %>','userseatNum')">좌석선택</label>
+					</td>
+				</tr>
+			</table>
+		<hr/>
+	<!-------------------------- 탑승객 구분   (성인) ----------------------------------------->
+<%}else{ %>
+
+        <div class="container mt-3" style="max-width: 1000px;">
+            <h1>비회원</h1>
+            
+            <form action="Payment.jsp" method="post">
+
+            <table width="100%" border=1>
+                <tr>
+                    <td bgcolor="#17a2b8" align="center" height="25">
+                       <b>승객구분</b>
+                    </td>
+                    <td bgcolor="#17a2b8" align="center" height="25"><b>
+                  
+                    <input type="checkbox" name="chk_info" value="1" checked >남 
+                    <input type="checkbox" value="2">여 </b></td>
+
+                </tr>                       
+                    <td bgcolor="#ffffff" align="center" height="25">영어이름</td>
+                    <td bgcolor="#ffffff" align="center" height="25">
+                       <input type="text" name="ename" 
+                       class="form-control mr-sm-2" placeholder="영어이름을 입력하세요." >
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td bgcolor="#ffffff" align="center" height="25">
+                        좌석번호
+                    </td>
+                    <td bgcolor="#ffffff" align="center" height="25">
+                        <input type="text" id="userseatNum" class="form-control mr-sm-2">
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td bgcolor="#ffffff" align="center" height="25">여권번호</td>
+                    <td bgcolor="#ffffff" align="center" height="25">
+                    <input type="text" name="passport" id="passport" class="form-control mr-sm-2" required="required"
+                           placeholder="여권번호을 입력하세요." ></td>
+                </tr>
+                
+                <tr>
+                    <td bgcolor="#ffffff" align="center" height="25">생년월일</td>
+                    <td bgcolor="#ffffff" align="center" height="25">
+                    <select name="year">
+                            <option >2020</option>
+                            <option value="1993">1993</option>
+                            <option value="1994">1994</option>
+                            <option value="1995">1995</option>
+                    </select> 
+                    <select name="month">
+                            <option >01</option>
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                    </select> 
+                    <select name="date">
+                            <option >01</option>
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                    </select>
+                        <lable class="btn btn-outline-success my-2 my-sm-0" onclick="openChild('<%= scCode %>','userseatNum')">좌석선택</label>
+                    </td>
+                </tr>
+            </table>
+        <hr/>
+
+<%} %>
+
+<%
+		for(int i=0; i<adult-1; i++){
+
+%>
+		<div class="container mt-3" style="max-width: 1000px;">
+			<h1>성인<%= i+1 %></h1>
+
+			<table width="100%" border=1>
+				<tr>
+					<td bgcolor="#17a2b8" align="center" height="25">
+					   <b>승객구분</b>
+					</td>
+					<td bgcolor="#17a2b8" align="center" height="25"><b>
+					<input type="checkbox" name="chk_info" value="1" checked >남 
+					<input type="checkbox" value="2">여 </b></td>
+				</tr>               		
+					<td bgcolor="#ffffff" align="center" height="25">영어이름</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+					   <input type="text" name="ename" class="form-control mr-sm-2" placeholder="영어이름을 입력하세요.">
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">
+						좌석번호
+					</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+						<input type="text" id="adultseatNum<%= i %>" class="form-control mr-sm-2">
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">
+						여권번호
+					</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+						<input type="text" name="passport" id="passport" class="form-control mr-sm-2" required="required"
+						   placeholder="여권번호을 입력하세요." value="<%= adult%>">
+					</td>
+				</tr>
+					<tr>
+					<td bgcolor="#ffffff" align="center" height="25">
+						생년월일
+					</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+						<select name="year">
+							<option >2020</option>
+							<option value="1993">1993</option>
+							<option value="1994">1994</option>
+							<option value="1995">1995</option>
+						</select> 
+						<select name="month">
+							<option>01</option>
+							<option value="01">01</option>
+							<option value="02">02</option>
+							<option value="03">03</option>
+						</select> 
+						<select name="date">
+							<option>01</option>
+							<option value="01">01</option>
+							<option value="02">02</option>
+							<option value="03">03</option>
+						</select>
+						<label class="btn btn-outline-success my-2 my-sm-0" onclick="openChild('<%= scCode %>','adultseatNum<%= i %>')">좌석선택</label>
+					</td>
+				</tr>
+			
+			</table>
+			<hr/>
+		</div>
+<%
+	}
+
+
+%>
+	<!-------------------------- 탑승객 구분   (소아) ----------------------------------------->
+
+<%
+	if(young>0){
+		for(int i=0; i<young; i++){
+
+%>
+		<div class="container mt-3" style="max-width: 1000px;">
+			<h1>소아<%= i+1 %></h1>
+
+			<table width="100%" border=1>
+				<tr>
+					<td bgcolor="#17a2b8" align="center" height="25">
+					   <b>승객구분</b>
+					</td>
+					<td bgcolor="#17a2b8" align="center" height="25"><b>
+					<input type="checkbox" name="chk_info" value="1" checked >남 
+					<input type="checkbox" value="2">여 </b></td>
+				</tr>               		
+					<td bgcolor="#ffffff" align="center" height="25">영어이름</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+					   <input type="text" name="ename" class="form-control mr-sm-2" placeholder="영어이름을 입력하세요.">
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">
+						좌석번호
+					</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+						<input type="text" id="youngseatNum<%= i%>" class="form-control mr-sm-2">
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">
+						여권번호
+					</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+						<input type="text" name="passport" id="passport" class="form-control mr-sm-2" required="required"
+						   placeholder="여권번호을 입력하세요." value="<%= adult%>">
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">
+						생년월일
+					</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+						<select name="year">
+							<option >2020</option>
+							<option value="1993">1993</option>
+							<option value="1994">1994</option>
+							<option value="1995">1995</option>
+						</select> 
+						<select name="month">
+							<option>01</option>
+							<option value="01">01</option>
+							<option value="02">02</option>
+							<option value="03">03</option>
+						</select> 
+						<select name="date">
+							<option>01</option>
+							<option value="01">01</option>
+							<option value="02">02</option>
+							<option value="03">03</option>
+						</select>
+						<label class="btn btn-outline-success my-2 my-sm-0" onclick="openChild('<%= scCode %>','youngseatNum<%= i %>')">좌석선택</label>
+					</td>
+				</tr>
+			
+			</table>
+			<hr/>
+		</div>
+<%
+		}//for
+	}//if
+
+
+%>
+	<!-------------------------- 탑승객 구분   (유아) ----------------------------------------->
+
+<%
+	if(younger>0){
+		for(int i=0; i<younger; i++){
+
+%>
+		<div class="container mt-3" style="max-width: 1000px;">
+			<h1>소아<%= i+1 %></h1>
+
+			<table width="100%" border=1>
+				<tr>
+					<td bgcolor="#17a2b8" align="center" height="25">
+					   <b>승객구분</b>
+					</td>
+					<td bgcolor="#17a2b8" align="center" height="25"><b>
+					<input type="checkbox" name="chk_info" value="1" checked >남 
+					<input type="checkbox" value="2">여 </b></td>
+				</tr>               		
+					<td bgcolor="#ffffff" align="center" height="25">영어이름</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+					   <input type="text" name="ename" class="form-control mr-sm-2" placeholder="영어이름을 입력하세요.">
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">
+						좌석번호
+					</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+						<input type="text" id="youngerseatNum<%= i %>" class="form-control mr-sm-2">
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">
+						여권번호
+					</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+						<input type="text" name="passport" id="passport" class="form-control mr-sm-2"
+						   placeholder="여권번호을 입력하세요." value="<%= adult%>">
+					</td>
+				</tr>
+				
+				<tr>
+					<td bgcolor="#ffffff" align="center" height="25">
+						생년월일
+					</td>
+					<td bgcolor="#ffffff" align="center" height="25">
+						<select name="year">
+							<option >2020</option>
+							<option value="1993">1993</option>
+							<option value="1994">1994</option>
+							<option value="1995">1995</option>
+						</select> 
+						<select name="month">
+							<option>01</option>
+							<option value="01">01</option>
+							<option value="02">02</option>
+							<option value="03">03</option>
+						</select> 
+						<select name="date">
+							<option>01</option>
+							<option value="01">01</option>
+							<option value="02">02</option>
+							<option value="03">03</option>
+						</select>
+						<label class="btn btn-outline-success my-2 my-sm-0" onclick="openChild('<%= scCode %>','youngerseatNum<%= i %>')">좌석선택</label>
+					</td>
+				</tr>
+			</table>
+			<hr/>
+		</div>
+		  
+		
+<%
+		}//for
+	}//if
+
+
+%>
+<input type="submit" value="결제하기">
+</form>
+	<footer class="bg-dark mt-4 p-5 text-center" style="color: #FFFFFF;">
+
+		SIST AIRLINES </footer>
+	<script src="./js/jquery.min.js"></script>
+	<script src="./js/popper.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+</body>
+
+</html>
+

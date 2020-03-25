@@ -1,0 +1,178 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width" , initial-scale="1">
+<link rel="stylesheet" href="css/bootstrap.css">
+<title>SIST AIRLINES</title>
+
+<script type="text/javascript">
+    
+        var openWin;
+        
+        function openDCityFormOne()  //출발지(편도) 선택 팝업창
+        {
+            // window.name = "부모창 이름"; 
+            window.name = "mainForm.jsp";
+            // window.open("open할 window", "자식창 이름", "팝업창 옵션");
+            openWin = window.open("cityDFormOne.jsp",
+                    "도시 선택", "width=570, height=350, resizable = no, scrollbars = yes");    
+        }
+        function openACityFormOne() //도착지(편도) 선택 팝업창
+        {
+            // window.name = "부모창 이름"; 
+            window.name = "mainForm.jsp";
+            // window.open("open할 window", "자식창 이름", "팝업창 옵션");
+            openWin = window.open("cityAFormOne.jsp",
+                    "도시 선택", "width=570, height=350, resizable = no, scrollbars = yes");    
+        }
+        function openDCityFormAround() //출발지(왕복) 선택 팝업창
+        {
+            // window.name = "부모창 이름"; 
+            window.name = "mainForm.jsp";
+            // window.open("open할 window", "자식창 이름", "팝업창 옵션");
+            openWin = window.open("cityDFormAround.jsp",
+                    "도시 선택", "width=570, height=350, resizable = no, scrollbars = yes");    
+        }
+        function openACityFormAround() //도착지(편도) 선택 팝업창
+        {
+            // window.name = "부모창 이름"; 
+            window.name = "mainForm.jsp";
+            // window.open("open할 window", "자식창 이름", "팝업창 옵션");
+            openWin = window.open("cityAFormAround.jsp",
+                    "도시 선택", "width=570, height=350, resizable = no, scrollbars = yes");    
+        }
+        function scnOnOff(v,id)
+        {
+        	//라디오 버튼 value
+        	if(v=="1"){
+        		document.getElementById("con1").style.display=""; //보여줌
+        		document.getElementById("con2").style.display="none";//숨김
+        	}else if(v=="2"){
+        		document.getElementById("con2").style.display=""; //보여줌
+        		document.getElementById("con1").style.display="none";//숨김
+        	}else{
+        		document.getElementById("con1").style.display="";//보여줌
+        		document.getElementById("con2").style.display="none";//숨김
+        		document.getElementById("con3").style.display="none";//숨김
+        	}
+        }
+</script>
+
+</head>
+<body>
+	<nav class="navbar navbar-default">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed"
+				data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+				aria-expanded="false">
+				<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="mainForm.jsp">SIST AIRLINES</a>
+		</div>
+		<div class="collapse navbar-collapse"
+			id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown"><a href="#" class="dropdown-toggle"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false">로그인/회원가입<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="login.jsp">로그인</a></li>
+						<li><a href="join2.jsp">회원가입</a></li>
+						<li><a href="mypage.jsp">마이 페이지</a></li>
+					</ul></li>
+				<li class="dropdown"><a href="#" class="dropdown-toggle"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false">항공권 예매<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="login.jsp">일반 예매</a></li>
+					</ul></li>
+				<li class="dropdown"><a href="#" class="dropdown-toggle"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false">스카이패스<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="join.jsp">회원 혜택</a></li>
+						<li><a href="join.jsp">마일리지 적립</a></li>
+					</ul></li>
+				<li class="dropdown"><a href="#" class="dropdown-toggle"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false">서비스 안내<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="join.jsp">탑승수속</a></li>
+						<li><a href="join.jsp">수하물</a></li>
+					</ul></li>
+				<li class="dropdown"><a href="#" class="dropdown-toggle"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false">프로모션/여행상품<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="join.jsp">이벤트</a></li>
+						<li><a href="join.jsp">특가항공</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container">
+		<div class="jumbotron" style="padding-top: 20px">
+			<h2 style="text-align: center;">항공권</h2>
+			<h4><a href="mainForm.jsp">예매</a></h4>
+			
+			<form method="post" action="schedule.jsp">
+				<div >
+					<label><input type="radio" name="trip-type" value="1" onclick="scnOnOff(this.value,con1)"/> 편도</label>
+					<label><input type="radio" name="trip-type" value="2" checked="checked" onclick="scnOnOff(this.value,con2)"/> 왕복</label>
+					<label><input type="radio" name="trip-type" value="3" onclick="scnOnOff(this.value,con3)"/> 다구간</label>
+				</div>
+				<div id="con1" style="display:none;"> 
+					<table>
+						<tr>
+							<td><input type="text" id="pDInputOne" class="form-control" placeholder="출발지" required="required"
+								name="dCity" maxlength="20"></td>
+							<td><img src="img\pin.png" id="btnDCity" onclick="openDCityFormOne()"
+								style="height: 20px; width: 20px;"></td>
+							<td><input type="text" id="pAInputOne" class="form-control" placeholder="목적지" required="required"
+								name="aCity" maxlength="20"></td>
+							<td><img src="img\pin.png" id="btnACity" onclick="openACityFormOne()"
+								style="height: 20px; width: 20px;"></td>
+							<td><input type="date" id="currentDate1"
+								placeholder="출발일(YYYY-MM-DD)" name="outDate" maxlength="20"></td>
+						</tr>
+					</table>
+					<script>document.getElementById('currentDate1').value = new Date().toISOString().substring(0, 10);</script>
+					<input type="submit" class="btn btn-primary form-control"
+					value="항공권 조회">
+				</div>
+				<div id="con2"> <!--style="display:none;"  -->
+					<table>
+					<tr>
+						<td><input type="text" id="pDInputAround" class="form-control" placeholder="출발지" required="required"
+								name="dCityA" maxlength="20"></td>
+						<td><img src="img\pin.png" onclick="openDCityFormAround()" id="btnDCity"
+							style="height: 20px; width: 20px;"></td> <!-- 출발지 이미지버튼 -->
+						<td><input type="text" id="pAInputAround" class="form-control" placeholder="목적지" required="required"
+							name="aCityA" maxlength="20"></td>
+						<td><img src="img\pin.png" id="btnACity" onclick="openACityFormAround()"
+							style="height: 20px; width: 20px;"></td> <!-- 도착지 이미지 버튼 -->
+						<td><input type="date" id="currentDate2"
+							placeholder="가는 날(YYYY-MM-DD)" name="outDateA" maxlength="20"></td>
+						<td><input type="date" id="currentDate3"
+							placeholder="오는 날(YYYY-MM-DD)" name="inDateA" maxlength="20"></td>
+					</tr>
+					</table>
+					<script>document.getElementById('currentDate2').value = new Date().toISOString().substring(0, 10);</script>
+					<script>document.getElementById('currentDate3').value = new Date().toISOString().substring(0, 10);</script>
+					<input type="submit" class="btn btn-primary form-control"
+						value="항공권 조회">
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="col-lg-4"></div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="js/bootstrap.js"></script>
+</body>
+</html>

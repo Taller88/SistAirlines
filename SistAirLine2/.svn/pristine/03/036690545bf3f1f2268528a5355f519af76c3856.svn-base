@@ -1,0 +1,56 @@
+package com.hr.cmn;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+/***
+ * 
+ * @author sist
+ *
+ */
+public abstract class WorkDiv {
+   //공통변수 
+   protected Logger LOG=Logger.getLogger(WorkDiv.class);
+   
+/**
+ * @설명 : 단건조회
+ * @param DTO
+ * @return DTO
+ */
+   public abstract DTO doSelectOne(DTO dto);
+   
+   
+/**
+ * @설명: 수정
+ * @param dto
+ * @return:int(0-실패,1-성공)
+ * 
+ */
+   public abstract int doUpdate(DTO dto);
+
+/**
+ * @설명: 삭제
+ * @param dto
+ * @return: int(0-실패, 1-성공)
+ */
+   public abstract int doDelete(DTO dto);
+
+   
+   
+
+/**
+ * @설명: 삽입
+ * @param dto
+ * @return: int(0-실패, 1-성공)
+ */
+   public abstract int doInsert(DTO dto);
+
+/**
+ * @설명: 목록조회
+ * @param dto
+ * @return
+ */
+   public abstract List<?> doRetrive(DTO dto);
+   
+}

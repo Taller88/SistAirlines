@@ -1,0 +1,179 @@
+/**
+ * 
+ */
+package Reservation;
+
+import com.hr.cmn.DTO;
+
+/**
+ * @author sist
+ *
+ */
+public class ReservationVO extends DTO {
+	private String RESNUM;
+	private String RESPASSPORT;
+	private String RESENAME;
+	private String RESKNAME;
+	private String RESBIR;
+	private int    RESPTYPE;
+	private int	   RESWAY;
+	private String RESPHONE;
+	private String RESEMAIL;
+	private String RESSTATE;
+	private String RESSCODE;
+	private String U_NUM;
+
+	
+	public ReservationVO() {}
+
+
+	public ReservationVO(String rESNUM, String rESPASSPORT, String rESENAME, String rESKNAME, String rESBIR,
+			int rESPTYPE, int rESWAY, String rESPHONE, String rESEMAIL, String rESSTATE, String rESSCODE,
+			String u_NUM) {
+		super();
+		RESNUM = rESNUM;
+		RESPASSPORT = rESPASSPORT;
+		RESENAME = rESENAME;
+		RESKNAME = rESKNAME;
+		RESBIR = rESBIR;
+		RESPTYPE = rESPTYPE;
+		RESWAY = rESWAY;
+		RESPHONE = rESPHONE;
+		RESEMAIL = rESEMAIL;
+		RESSTATE = rESSTATE;
+		RESSCODE = rESSCODE;
+		U_NUM = u_NUM;
+	}
+
+
+	public String getRESNUM() {
+		return RESNUM;
+	}
+
+
+	public void setRESNUM(String rESNUM) {
+		RESNUM = rESNUM;
+	}
+
+
+	public String getRESPASSPORT() {
+		return RESPASSPORT;
+	}
+
+
+	public void setRESPASSPORT(String rESPASSPORT) {
+		RESPASSPORT = rESPASSPORT;
+	}
+
+
+	public String getRESENAME() {
+		return RESENAME;
+	}
+
+
+	public void setRESENAME(String rESENAME) {
+		RESENAME = rESENAME;
+	}
+
+
+	public String getRESKNAME() {
+		return RESKNAME;
+	}
+
+
+	public void setRESKNAME(String rESKNAME) {
+		RESKNAME = rESKNAME;
+	}
+
+
+	public String getRESBIR() {
+		return RESBIR;
+	}
+
+
+	public void setRESBIR(String rESBIR) {
+		RESBIR = rESBIR;
+	}
+
+
+	public int getRESPTYPE() {
+		return RESPTYPE;
+	}
+
+
+	public void setRESPTYPE(int rESPTYPE) {
+		RESPTYPE = rESPTYPE;
+	}
+
+
+	public int getRESWAY() {
+		return RESWAY;
+	}
+
+
+	public void setRESWAY(int rESWAY) {
+		RESWAY = rESWAY;
+	}
+
+
+	public String getRESPHONE() {
+		return RESPHONE;
+	}
+
+
+	public void setRESPHONE(String rESPHONE) {
+		RESPHONE = rESPHONE;
+	}
+
+
+	public String getRESEMAIL() {
+		return RESEMAIL;
+	}
+
+
+	public void setRESEMAIL(String rESEMAIL) {
+		RESEMAIL = rESEMAIL;
+	}
+
+
+	public String getRESSTATE() {
+		return RESSTATE;
+	}
+
+
+	public void setRESSTATE(String rESSTATE) {
+		RESSTATE = rESSTATE;
+	}
+
+
+	public String getRESSCODE() {
+		return RESSCODE;
+	}
+
+
+	public void setRESSCODE(String rESSCODE) {
+		RESSCODE = rESSCODE;
+	}
+
+
+	public String getU_NUM() {
+		return U_NUM;
+	}
+
+
+	public void setU_NUM(String u_NUM) {
+		U_NUM = u_NUM;
+	}
+
+
+	@Override
+	public String toString() {
+		return "ReservationVO [RESNUM=" + RESNUM + ", RESPASSPORT=" + RESPASSPORT + ", RESENAME=" + RESENAME
+				+ ", RESKNAME=" + RESKNAME + ", RESBIR=" + RESBIR + ", RESPTYPE=" + RESPTYPE + ", RESWAY=" + RESWAY
+				+ ", RESPHONE=" + RESPHONE + ", RESEMAIL=" + RESEMAIL + ", RESSTATE=" + RESSTATE + ", RESSCODE="
+				+ RESSCODE + ", U_NUM=" + U_NUM + ", toString()=" + super.toString() + "]";
+	}
+
+
+
+}
