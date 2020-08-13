@@ -1,7 +1,9 @@
 # SistAirlines
 JSP를 활용한 항공예약시스템
 
+![sist_1PNG](https://user-images.githubusercontent.com/48818574/90142488-63b85580-ddb7-11ea-9248-dda0eb32f6a0.PNG){: width="100" height="100"}
 
+![sist_2](https://user-images.githubusercontent.com/48818574/90142506-6915a000-ddb7-11ea-8f32-479a6b7b1ffb.PNG){: width="100" height="100"}
   * 주요 기능 
     1. 스케줄 조회 
     2. 탑승객 정보입력 
