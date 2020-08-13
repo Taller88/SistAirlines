@@ -15,7 +15,7 @@ JSP를 활용한 항공예약시스템
     - Javascript
     
   * ERD
-  ![2차_erd](https://user-images.githubusercontent.com/48818574/90142091-ea206780-ddb6-11ea-906c-008ae7f45feb.png){: width="100" height="100"}
+  ![2차_erd](https://user-images.githubusercontent.com/48818574/90142091-ea206780-ddb6-11ea-906c-008ae7f45feb.png){: width="100px" height="100px"}
 
   * 스케줄 관리 
     - 초기 데이터
